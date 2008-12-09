@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2008 Google, Inc. All Rights Reserved. -->
+<mx:VBox label="Data"
+  width="100%" height="100%" 
+  xmlns:mx="http://www.adobe.com/2006/mxml" 
+  xmlns:harvester="com.google.testing.harvester.*"
+  >
+  <mx:Metadata>
+    [Event(name="changelistsEvent", type="com.google.testing.harvester.ChangelistsEvent")]
+  </mx:Metadata>
+  <harvester:DataController id="controller"/>
+  <harvester:Sorter id="sorter"/>
+  <harvester:PercentFormatter id="percentFormatter"/>
+  <harvester:DatetimeFormatter id="dateFormatter"/>
+  <mx:ArrayCollection id="chartDataset"/>
+  <mx:DataGrid width="100%" height="100%"
+      dataProvider="{chartDataset}"
+      itemClick="dispatchEvent(new ChangelistsEvent(event.target.selectedItem.changelists))">
+    <mx:columns>
+      <mx:DataGridColumn headerText="Date" width="250"
+        labelFunction="{dateFormatter.forField('timestamp')}"
+        sortCompareFunction="{sorter.functionSort(controller.time)}"/>
+      <mx:DataGridColumn headerText="User" dataField="user"/>
+      <mx:DataGridColumn headerText="Total" dataField="size" width="80"/>
+      <mx:DataGridColumn headerText="Production" dataField="production" width="80"/>
+      <mx:DataGridColumn headerText="Test" dataField="test" width="80"/>
+      <mx:DataGridColumn headerText="Ratio" width="80"
+          labelFunction="{percentFormatter.forField('ratio')}"
+          sortCompareFunction="{sorter.fieldSort('ratio')}"/>
+    </mx:columns>
+  </mx:DataGrid>
+</mx:VBox>

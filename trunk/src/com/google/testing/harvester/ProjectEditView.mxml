@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel 
+  borderAlpha="1"
+  xmlns:mx="http://www.adobe.com/2006/mxml" 
+  xmlns:harvester="com.google.testing.harvester.*" 
+  title="Project Configuration">
+  <harvester:ProjectEditController id="controller"/>
+  <mx:Form width="600">
+    <mx:FormItem label="Name:" width="100%">
+      <mx:TextInput width="100%" text="{controller.editableProject.name}"
+        change="controller.editableProject.name = event.target.text"/>
+    </mx:FormItem>
+    <mx:FormItem label="Path:" width="100%">
+      <mx:TextArea width="100%" text="{controller.editableProject.path}" height="100"
+        change="controller.editableProject.path = event.target.text"/>
+    </mx:FormItem>
+    <mx:FormItem label="Developers:" width="100%">
+      <mx:TextArea width="100%" text="{controller.editableProject.developers}" height="100"
+        change="controller.editableProject.developers = event.target.text"/>
+    </mx:FormItem>
+    <mx:FormItem width="100%">
+      <mx:HBox width="100%" height="100%">
+        <mx:Spacer width="100%" height="100%"/>
+        <mx:Button label="Cancel" click="controller.cancel()"/>
+        <mx:Button label="{controller.applyButtonLabel}" click="controller.apply()"/>
+      </mx:HBox>
+    </mx:FormItem>
+  </mx:Form>
+</mx:Panel>

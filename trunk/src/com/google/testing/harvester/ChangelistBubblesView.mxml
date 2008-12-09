@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2008 Google, Inc. All Rights Reserved. -->
+<mx:VBox 
+  width="100%" height="100%" 
+  label="Changelist Bubbles"
+  xmlns:mx="http://www.adobe.com/2006/mxml" 
+  xmlns:harvester="com.google.testing.harvester.*">
+  <mx:Metadata>
+    [Event(name="changelistsEvent", type="com.google.testing.harvester.ChangelistsEvent")]
+  </mx:Metadata>
+  <mx:ArrayCollection id="chartDataset"/>
+  <harvester:ChangelistBubblesController id="controller"/>
+  <mx:BubbleChart id="chart" 
+    width="100%" height="100%" 
+    filters="{[]}"
+    showDataTips="true"
+    dataTipFunction="{controller.dataTipFunction}"
+    dataProvider="{chartDataset}"
+    dataTipMode="single"
+    paddingLeft="8"
+    itemClick="dispatchEvent(new ChangelistsEvent(event.hitData.item.changelists))">
+    
+    <mx:series>
+      <mx:BubbleSeries xField="timestamp" yField="ratio" radiusField="sqrtSize">
+        <mx:itemRenderer>
+          <mx:Component>
+            <harvester:UserBubbleRenderer/>
+          </mx:Component>
+        </mx:itemRenderer>
+      </mx:BubbleSeries>
+    </mx:series>
+    
+    <mx:verticalAxis>
+      <mx:LinearAxis minimum="-0.1" maximum="1.1" 
+        labelFunction="{controller.percentLabels}" title="Test / (Production + Test)"/>
+    </mx:verticalAxis>
+    
+    <mx:horizontalAxis>
+      <mx:DateTimeAxis dataInterval="1" dataUnits="weeks"/>
+    </mx:horizontalAxis>
+    
+  </mx:BubbleChart>
+</mx:VBox>
