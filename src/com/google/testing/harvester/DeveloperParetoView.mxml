@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2008 Google, Inc. All Rights Reserved. -->
+<mx:VBox label="Developer Pareto"
+  width="100%" height="100%"
+  xmlns:mx="http://www.adobe.com/2006/mxml" 
+  xmlns:harvester="com.google.testing.harvester.*">
+  <mx:Metadata>
+    [Event(name="changelistsEvent", type="com.google.testing.harvester.ChangelistsEvent")]
+  </mx:Metadata>
+  <mx:ArrayCollection id="chartDataset"/>
+  <harvester:DeveloperParetoController id="controller" 
+    sort="{group.selectedValue}"
+    aggregates="{chartDataset}"/>
+  <mx:HBox width="100%" height="100%">
+    <mx:ColumnChart id="chart"
+      seriesFilters="{[]}" 
+      width="100%" height="100%" 
+      showDataTips="true"
+      dataProvider="{controller.chart}"
+      paddingLeft="8"
+      itemClick="dispatchEvent(new ChangelistsEvent(event.hitData.item.changelists))">
+      <mx:series>
+        <mx:ColumnSeries displayName="Total" 
+          yField="size" xField="user"/>
+        <mx:ColumnSeries displayName="Production" 
+          yField="production" xField="user"/>
+        <mx:ColumnSeries displayName="Test" 
+          yField="test" xField="user"/>
+        <mx:ColumnSeries displayName="Test Ratio" 
+          yField="ratio" xField="user" verticalAxis="{ratioAxis}"/>
+      </mx:series>
+      
+      <mx:horizontalAxis>
+        <mx:CategoryAxis displayName="User" categoryField="user"/>
+      </mx:horizontalAxis>
+      
+      <mx:verticalAxis>
+        <mx:LinearAxis title="Lines of code"/>
+      </mx:verticalAxis> 
+      
+      <mx:secondVerticalAxis>
+        <mx:LinearAxis id="ratioAxis" minimum="0" maximum="1"/>
+      </mx:secondVerticalAxis>
+    </mx:ColumnChart>
+    
+    <mx:VBox height="100%">
+      <mx:RadioButtonGroup id="group" selectedValue="{controller.SIZE}"/>
+      <mx:RadioButton label="Total" group="{group}" value="{controller.SIZE}"/>
+      <mx:RadioButton label="Production" group="{group}" value="{controller.PRODUCTION}"/>
+      <mx:RadioButton label="Test" group="{group}" value="{controller.TEST}"/>
+      <mx:RadioButton label="Ratio" group="{group}" value="{controller.RATIO}"/>
+      <mx:HBox width="100%" horizontalGap="0" verticalAlign="middle">
+        <mx:Label text="Limit: "/>
+        <mx:TextInput text="{controller.showTopN}" width="50" 
+          change="controller.showTopN = int(event.target.text)"/>
+      </mx:HBox>
+      <mx:Spacer height="50%"/>
+      <mx:Legend dataProvider="{chart}"/>
+      <mx:Spacer height="50%"/>
+    </mx:VBox>
+  </mx:HBox>
+  
+</mx:VBox>

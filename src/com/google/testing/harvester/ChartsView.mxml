@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2008 Google, Inc. All Rights Reserved. -->
+<mx:HBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" xmlns:harvester="com.google.testing.harvester.*">
+  <harvester:Set id="selectedDevelopers"/>
+  <mx:ArrayCollection id="chartDataset"/>
+  <mx:ArrayCollection id="developers"/>
+  <mx:ArrayCollection id="selectedChangelists"/>
+  <harvester:ChartsController id="controller" 
+    developerSelection="{developerList.selectedItems}"
+    selectedDevelopers="{selectedDevelopers}"/>
+  <harvester:RatioComputer id="ratioComputer"/>
+  <mx:Panel width="150" height="100%" 
+    title="{'Developers (' + developers.length + ')'}">
+    <mx:List id="developerList" width="100%" height="100%" 
+      dataProvider="{developers}" 
+      allowMultipleSelection="true"
+      selectedItems="{selectedDevelopers.source}"/>
+    <mx:Button label="Deselect All" width="100%" 
+      click="developerList.selectedItems=[]"/>
+  </mx:Panel>
+  <mx:VDividedBox width="100%" height="100%">
+    <mx:TabNavigator width="100%" height="100%">
+      <harvester:DataView chartDataset="{chartDataset}"
+        changelistsEvent="selectedChangelists = event.changelists"/>
+      <harvester:ChangelistBubblesView chartDataset="{chartDataset}"
+        changelistsEvent="selectedChangelists = event.changelists"/>
+      <harvester:DeveloperParetoView chartDataset="{chartDataset}"
+        changelistsEvent="selectedChangelists = event.changelists"/>
+      <harvester:NoTestView chartDataset="{chartDataset}" />
+    </mx:TabNavigator>
+    <mx:DataGrid width="100%" height="30%" 
+      itemClick="controller.onChangelistClick(event.target.selectedItem)"
+      dataProvider="{selectedChangelists}">
+      <mx:columns>
+        <mx:DataGridColumn headerText="CL" dataField="cl" width="80"/>
+        <mx:DataGridColumn headerText="Date" 
+          labelFunction="{controller.timestamp}"
+          sortCompareFunction="{controller.sorter(controller.time)}"/>
+        <mx:DataGridColumn headerText="Developer" dataField="user" width="80"/>
+        <mx:DataGridColumn headerText="Language" dataField="language" width="80"/>
+        <mx:DataGridColumn headerText="Total"  width="80"
+          labelFunction="{ratioComputer.total}"
+          sortCompareFunction="{controller.sorter(ratioComputer.total)}"/>
+        <mx:DataGridColumn headerText="Test"  width="80"
+          labelFunction="{ratioComputer.test}"
+          sortCompareFunction="{controller.sorter(ratioComputer.test)}"/>
+        <mx:DataGridColumn headerText="Production" width="80"
+          labelFunction="{ratioComputer.production}"
+          sortCompareFunction="{controller.sorter(ratioComputer.production)}"/>
+        <mx:DataGridColumn headerText="Ratio"  width="80"
+          labelFunction="{ratioComputer.ratioPercent}"
+          sortCompareFunction="{controller.sorter(ratioComputer.ratio)}"/>
+        <mx:DataGridColumn headerText="T +" dataField="testAdded" width="50"/>
+        <mx:DataGridColumn headerText="T ∆" dataField="testChanged" width="50"/>
+        <mx:DataGridColumn headerText="T -" dataField="testDeleted" width="50"/>
+        <mx:DataGridColumn headerText="P +" dataField="productionAdded" width="50"/>
+        <mx:DataGridColumn headerText="P ∆" dataField="productionChanged" width="50"/>
+        <mx:DataGridColumn headerText="P -" dataField="productionDeleted" width="50"/>
+      </mx:columns>
+    </mx:DataGrid>
+  </mx:VDividedBox>
+</mx:HBox>

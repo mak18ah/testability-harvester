@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2008 Google, Inc. All Rights Reserved. -->
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%">
+  <mx:Script>
+    <![CDATA[
+      import mx.utils.ObjectUtil;
+      import mx.graphics.IFill;
+      import mx.events.MenuEvent;
+      import flash.net.navigateToURL;
+      import mx.events.ItemClickEvent;
+      import mx.controls.Menu;
+      import mx.effects.easing.Elastic;
+      import mx.charts.events.ChartItemEvent;
+      import mx.controls.Alert;
+      import mx.charts.HitData;
+      import mx.charts.series.BubbleSeries;
+
+      /**
+       * Clear the chart bubble series.
+       */
+      public function clearSeries():void {
+        seriesCounter = 0;
+        for each (var serie:BubbleSeries in chart.series) {
+          serie.visible = false;
+          serie.displayName = null;
+          serie.yField = null;
+          serie.radiusField = null;
+        }
+      }
+
+      private var seriesCounter:int = 0;
+      
+      /**
+       * Add additional user to the series.
+       */
+      public function addSeries(user:String):void {
+        var serie:BubbleSeries = chart.series[seriesCounter++];
+        if (serie == null) return;
+        serie.visible = true;
+        serie.displayName = user;
+        serie.yField = user + "_RATIO";
+        serie.radiusField = user + "_SIZE";
+      }
+      
+      /**
+       * Data tip function for rendering hover tool tips.
+       */
+      private function dataTipFunction(hit:HitData):String {
+        var label:String = 
+           "<b>User: user</b>" +
+           "<br>Test Ratio: ratio%<br>" +
+           "CL Size: size<br>" +
+           "Date: date<br>CLs: cls";
+        var item:* = hit.item;
+        var user:String = (hit.element as BubbleSeries).displayName;
+        label = label.replace("user", user);
+        label = label.replace("cls", clsToString(item[user + "_cls"]));
+        var userRatio:Number = item[user + "_RATIO"];
+        var userSize:Number = item[user + "_SIZE"];
+        label = label.replace("ratio", percentFormater.format(100 * userRatio));
+        label = label.replace("size", (int)(userSize * userSize));
+        label = label.replace("date", dateFormater.format(item.date));
+        return label;
+      }
+      
+      /**
+       * convert the list of changelists into human redable string.
+       */
+      private function clsToString(cls:Array):String {
+        var text:String = "";
+        var sep:String = "";
+        for each (var cl:* in cls) {
+          text += sep + cl.cl;
+          sep = ", ";
+        }
+        return text;
+      }
+      
+      /**
+       * Shows a pop up menu of all change lists when user clicks on bubble, 
+       * and redirects to mondrian.
+       */
+      public function bubbleClick(event:ChartItemEvent):void {
+        var item:* = event.hitData.item;
+        var user:String = (event.hitData.element as BubbleSeries).radiusField;
+        user = user.replace("_SIZE", "");
+        var cls:Array = item[user + "_cls"];
+        
+        var myMenu:Menu = Menu.createMenu(chart, cls, false);
+        myMenu.labelFunction = function(item:*):String { 
+            return "CL#" + item.cl + 
+              " [" + item.user + "]" +
+              " P +" + item.pa + 
+              " ∆" + item.pc + 
+              " -" + item.pd + 
+              "; T +" + item.ta + 
+              " ∆" + item.tc + 
+              " -" + item.td;
+          };
+        myMenu.addEventListener(MenuEvent.ITEM_CLICK, 
+          function(event:MenuEvent):void {
+            var item:* = event.item;
+            navigateToURL(new URLRequest("http://cl/" + item.cl), 
+              "CL_" + item.cl);
+          });
+        
+        // Calculate position of Menu in Application's coordinates. 
+        var point:Point = new Point(event.localX, event.localY);
+        point = chart.localToGlobal(point);
+        myMenu.show(point.x, point.y);        
+      }
+      
+      /**
+       * Format chart label as percent.
+       */
+      private function percentLabels(value:*, previous:*, axis:*):String { 
+        return percentFormater.format(value * 100) + '%';
+      }
+      
+      /**
+       * Format chart label as time stamp.
+       */
+      private function timeLabels(value:*, previous:*, axis:*, item:*):String {
+        return dateFormater.format(value);
+      }
+    ]]>
+  </mx:Script>
+  <mx:NumberFormatter id="percentFormater" precision="0"/>
+  <mx:DateFormatter id="dateFormater" formatString="M/D/YY"/>
+  <mx:ArrayCollection id="chartData"/>
+    <mx:BubbleChart id="chart" 
+      width="100%" height="100%" 
+      filters="{[]}" showDataTips="true"
+      dataTipFunction="{dataTipFunction}"
+      dataProvider="{chartData}"
+      dataTipMode="single"
+      itemClick="bubbleClick(event)">
+      
+      <mx:series>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+        <mx:BubbleSeries visible="false" alpha="0.5"/>
+      </mx:series>
+      
+      <mx:verticalAxis>
+        <mx:LinearAxis minimum="0" maximum="1" labelFunction="percentLabels"/>
+      </mx:verticalAxis>
+      
+      <mx:horizontalAxis>
+        <mx:CategoryAxis labelFunction="timeLabels" categoryField="date"/>
+      </mx:horizontalAxis>
+    </mx:BubbleChart>
+  
+</mx:VBox>

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2008 Google, Inc. All Rights Reserved. -->
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" 
+  width="100%" height="100%" 
+  initialize="controller.loadProjects()"
+  xmlns:harvester="com.google.testing.harvester.*" 
+  verticalAlign="middle" backgroundColor="#FFFFFF" xmlns:events="flash.events.*">
+  <harvester:DatasetController id="controller"/>
+  <mx:DateFormatter id="dateFormater" formatString="MM/DD/YYYY"/>
+  <mx:HBox width="100%">
+    <mx:Panel width="200" height="100%" layout="vertical" 
+      title="{'Select Datasource (' + controller.projects.length + ')'}">
+      <mx:List width="100%" height="100%"
+        labelField="name"
+        dataProvider="{controller.projects}"
+        change="controller.fetch(event.currentTarget.selectedItem)"/>
+      <mx:Button width="100%" label="(+) Add Project" click="controller.addProject(this)"/>
+    </mx:Panel>
+    <mx:VBox width="100%" height="100%" verticalAlign="middle">
+      <mx:Panel width="100%" layout="absolute" title="Datasource Information">
+        <mx:Form width="100%" verticalGap="2" 
+          paddingTop="4" paddingRight="4" paddingLeft="4" paddingBottom="4">
+          <mx:FormItem label="Name:" width="100%">
+            <mx:HBox width="100%">
+              <mx:Label text="{controller.selectedProject.name}" width="100%"/>
+              <mx:Button label="Edit" click="controller.editProject()"/>
+            </mx:HBox>
+          </mx:FormItem>
+          <mx:FormItem label="CL:" width="100%">
+            <mx:HBox width="100%">
+              <mx:Label text="{controller.dataset.first.cl}"  width="120"/>
+              <mx:Label text="-"/>
+              <mx:Label text="{controller.dataset.last.cl}"  width="120"/>
+              <mx:Spacer width="100%"/>
+              <mx:Label text="Total:"/>
+              <mx:Label text="{controller.dataset.changelists.length}"/>
+            </mx:HBox>
+          </mx:FormItem>
+          <mx:FormItem label="Dates:" width="100%">
+            <mx:HBox width="100%">
+              <mx:Label text="{dateFormater.format(controller.dataset.first.date)}"  width="120"/>
+              <mx:Label text="-"/>
+              <mx:Label text="{dateFormater.format(controller.dataset.last.date)}"  width="120"/>
+            </mx:HBox>
+          </mx:FormItem>
+          <mx:FormItem label="Developers:" width="100%">
+            <mx:TextInput text="{controller.selectedProject.developers}" 
+                 width="100%" editable="false"/>
+          </mx:FormItem>
+          <mx:FormItem label="Projet path:" width="100%">
+            <mx:TextArea width="100%" editable="false"
+               text="{controller.selectedProject.path}"/>
+          </mx:FormItem>
+        </mx:Form>
+      </mx:Panel>
+      <mx:Panel width="100%" layout="vertical" title="Ratio Computation">
+        <mx:HBox verticalAlign="middle" width="100%">
+          <mx:Label text="Test Ratio ="/>
+          <mx:VBox>
+            <mx:Label text="Test" width="100%" textAlign="center"/>
+            <mx:HRule width="100%" strokeColor="#000000"/>
+            <mx:Label text="Production + Test" width="100%" textAlign="center"/>
+          </mx:VBox>
+          <mx:Spacer width="100%"/>
+          <mx:VBox>
+            <mx:HBox width="100%" verticalAlign="middle">
+              <mx:Label text="Test =" width="100%" textAlign="right"/>
+              <mx:CheckBox label="+ additions" 
+                toolTip="Test lines added" 
+                selected="{controller.aggregate.ratioComputer.productionAdded}"
+                change="controller.aggregate.ratioComputer.productionAdded = event.target.selected"/>
+              <mx:CheckBox label="+ changes"
+                toolTip="Test lines changed"
+                selected="{controller.aggregate.ratioComputer.productionChanged}"
+                change="controller.aggregate.ratioComputer.productionChanged = event.target.selected"/>
+              <mx:CheckBox label="- deletions"
+                toolTip="Test lines removed" 
+                selected="{controller.aggregate.ratioComputer.productionDeleted}"
+                change="controller.aggregate.ratioComputer.productionDeleted = event.target.selected"/>
+            </mx:HBox>
+            <mx:HBox verticalAlign="middle">
+              <mx:Label text="Production =" width="100%"/>
+              <mx:CheckBox label="+ additions"
+                toolTip="Production lines added"
+                selected="{controller.aggregate.ratioComputer.testAdded}"
+                change="controller.aggregate.ratioComputer.testAdded = event.target.selected"/>
+              <mx:CheckBox label="+ changes"
+                toolTip="Production lines changed"
+                selected="{controller.aggregate.ratioComputer.testChanged}"
+                change="controller.aggregate.ratioComputer.testChanged = event.target.selected"/>
+              <mx:CheckBox label="- deletions"
+                toolTip="Production lines removed"
+                selected="{controller.aggregate.ratioComputer.testDeleted}"
+                change="controller.aggregate.ratioComputer.testDeleted = event.target.selected"/>
+            </mx:HBox>
+          </mx:VBox>
+        </mx:HBox>
+      </mx:Panel>
+      <mx:Panel width="100%" layout="vertical" title="Filter (Show only)">
+        <mx:Form width="100%" height="100%" verticalGap="2"
+          paddingBottom="4" paddingLeft="4" paddingRight="4" paddingTop="4">
+          <mx:FormItem label="Dates:" width="100%">
+            <mx:HBox width="100%">
+              <mx:DateField width="50%" 
+                selectedDate="{controller.filter.startDate}"
+                change="controller.filter.startDate = event.currentTarget.selectedDate"/>
+              <mx:Label text="-"/>
+              <mx:DateField width="50%"
+                selectedDate="{controller.filter.endDate}"
+                change="controller.filter.endDate = event.currentTarget.selectedDate"/>
+              <mx:Button label="All" click="controller.filterAllDates()"/>
+            </mx:HBox>
+          </mx:FormItem>
+          <mx:FormItem label="CLs:" width="100%">
+            <mx:HBox width="100%">
+              <mx:TextInput width="50%"
+                text="{controller.filter.startCL}"
+                change="controller.filter.startCL = int(event.currentTarget.text)"/>
+              <mx:Label text="-"/>
+              <mx:TextInput width="50%"
+                text="{controller.filter.endCL}"
+                change="controller.filter.endCL = int(event.currentTarget.text)"/>
+              <mx:Button label="All" click="controller.filterAllCLs()"/>
+            </mx:HBox>
+          </mx:FormItem>
+          <mx:FormItem label="Developers:" width="100%" verticalGap="2">
+            <mx:TextInput width="100%"
+              text="{controller.filter.selectedDevelopers.asString}"
+              focusOut="controller.filter.selectedDevelopers.asString = event.target.text"/>
+          </mx:FormItem>
+          <mx:FormItem label="Skip CLs:" width="100%" verticalGap="2">
+            <mx:TextInput width="100%"
+                text="{controller.filter.skipCLs.asString}"
+                focusOut="controller.filter.skipCLs.asString = event.target.text"/>
+          </mx:FormItem>
+          <mx:FormItem label="Language:" width="100%">
+            <mx:HBox width="100%">
+              <mx:CheckBox label="C++"
+                selected="{controller.filter.language_CPP}"
+                change="controller.filter.language_CPP = event.target.selected"/>
+              <mx:CheckBox label="Java"
+                selected="{controller.filter.language_Java}"
+                change="controller.filter.language_Java = event.target.selected"/>
+              <mx:CheckBox label="JavaScript"
+                selected="{controller.filter.language_JavaScript}"
+                change="controller.filter.language_JavaScript = event.target.selected"/>
+              <mx:CheckBox label="Python"
+                selected="{controller.filter.language_Python}"
+                change="controller.filter.language_Python = event.target.selected"/>
+            </mx:HBox>
+          </mx:FormItem>
+          <mx:FormItem label="CL Count:" width="100%">
+            <mx:Label text="{controller.filter.filteredCLs.length}"/>
+          </mx:FormItem>
+        </mx:Form>
+      </mx:Panel>
+      <mx:Panel width="100%" layout="vertical" title="Aggregate">
+        <mx:Form width="100%" paddingBottom="4" 
+          paddingLeft="4" paddingRight="4" paddingTop="4" verticalGap="2">
+          <mx:FormItem label="Developers:">
+            <mx:CheckBox label="Aggregate developers"
+              selected="{controller.aggregate.aggregateDevelopers}"
+              change="controller.aggregate.aggregateDevelopers = event.target.selected"/>
+          </mx:FormItem>
+          <mx:FormItem label="Time:" width="100%">
+            <mx:HBox width="100%">
+              <mx:RadioButtonGroup id="timeAggregate" 
+                selectedValue="{controller.aggregate.timeAggregator}"
+                change="{controller.aggregate.timeAggregator = event.target.selectedValue}"/>
+              <mx:RadioButton label="none" group="{timeAggregate}" value="{TimeAggregator.NONE}"/>
+              <mx:RadioButton label="Day" group="{timeAggregate}" value="{TimeAggregator.DAY}"/>
+              <mx:RadioButton label="Week" group="{timeAggregate}" value="{TimeAggregator.WEEK}"/>
+              <mx:RadioButton label="Month" group="{timeAggregate}" value="{TimeAggregator.MONTH}"/>
+              <mx:RadioButton label="Year" group="{timeAggregate}" value="{TimeAggregator.YEAR}"/>
+              <mx:RadioButton label="All" group="{timeAggregate}" value="{TimeAggregator.EVERYTHING}"/>
+            </mx:HBox>
+          </mx:FormItem>
+          <mx:FormItem label="Count:" width="100%">
+            <mx:Label text="{controller.aggregate.aggregates.length}"/>
+          </mx:FormItem>
+        </mx:Form>
+      </mx:Panel>
+    </mx:VBox>
+    <mx:VBox height="100%" verticalAlign="middle">
+      <mx:Button label="Visualize &gt;&gt;" click="controller.visualize()"/>
+    </mx:VBox>
+  </mx:HBox>
+</mx:VBox>
