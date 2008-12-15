@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+				xmlns:flexunit="flexunit.flexui.*"
+				xmlns:harvester="com.google.testing.harvester.*" 
+				creationComplete="onCreationComplete()">
+	<mx:Script>
+		<![CDATA[
+			import flexunit.framework.TestSuite;
+			import com.google.testing.harvester.*;
+			
+			// Create the test suite and run the tests
+			private function onCreationComplete():void
+			{
+  				testRunner.test = FlexUnitAllTests.suite();
+                testRunner.startTest();
+  			}
+			
+		]]>
+	</mx:Script>
+
+	<!-- FlexUnit GUI Component -->
+	<flexunit:TestRunnerBase id="testRunner" width="100%" height="100%" />
+</mx:Application>

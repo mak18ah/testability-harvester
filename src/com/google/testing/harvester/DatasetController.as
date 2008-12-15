@@ -15,7 +15,7 @@ package com.google.testing.harvester {
   [Event(name="visualize", type="flash.events.Event")]
   [Event(name="newDataset", type="flash.events.Event")]
   public class DatasetController {
-    public var server:Server = new Server();
+    public var server:Server = ServerFactory.create();
     public var projects:ArrayCollection = new ArrayCollection();
     public var selectedProject:Project;
     public var projectEditController:ProjectEditController;
