@@ -8,7 +8,7 @@ package com.google.testing.harvester {
   
   [Bindable]
   public class ProjectEditController {
-    public var server:Server = new Server();
+    public var server:Server = ServerFactory.create();
     
     public var project:Project = new Project();
     public var editableProject:Project = new Project();
