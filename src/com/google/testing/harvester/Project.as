@@ -19,5 +19,9 @@ package com.google.testing.harvester {
       }
       return text;
     }
+    
+    public function toRawString():String {
+    	return "===\n" + toString();
+    }
   }
 }
