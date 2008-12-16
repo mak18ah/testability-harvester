@@ -1,151 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <project name="Harvester" basedir="." default="all">
-    
-    <taskdef name="flexunit" classname="com.adobe.ac.ant.tasks.FlexUnitTask" classpath="${basedir}/libs/FlexAntTasks.jar" ></taskdef>
-    <taskdef resource="flexTasks.tasks" classpath="${basedir}/libs/flexTasks.jar" />     
-    
-    <property environment="env" />
-    <property name="FLEX_HOME" value="${env.FLEX_HOME}"/>
-    <property name="APP_ROOT" value="${basedir}"/>
-    <property name="DEPLOY_ZIP_DIR" value="${basedir}/bin"/>
-    <property name="DEPLOY_DIR" value="${DEPLOY_ZIP_DIR}/artifacts"/>
-	
-	<!-- compiled mxml/as file Name -->
-    <property name="fileName" value="Harvester" />
+
+	<taskdef name="flexunit" classname="com.adobe.ac.ant.tasks.FlexUnitTask" classpath="${basedir}/libs/FlexAntTasks.jar"/>
+	<taskdef resource="flexTasks.tasks" classpath="${basedir}/libs/flexTasks.jar" />
+
+	<property environment="env" />
+	<property name="FLEX_HOME" value="${env.FLEX_HOME}" />                      <!-- Provided by properties file -->
+	<property name="APP_ROOT" value="." />
+	<property name="DEPLOY_ZIP_DIR" value="${basedir}/deploy" />
+	<property name="DEPLOY_DIR" value="${DEPLOY_ZIP_DIR}/artifacts" />
+
+	<property name="TOMCAT_HOME" value="C:\programme\apache-tomcat-6.0.16" />   <!-- Provided by properties file -->
+	<property name="webapp" value="examples" />                                 <!-- Provided by properties file -->
+
+	<property name="fileName" value="Harvester" />
 	<property name="fileNameTest" value="Harvester_Test" />
-	
-	<!-- compiled mxml/as file ext -->
-    <property name="fileExt" value="mxml" />
-    
-	<!-- modular application's main application fileName -->
-	<property name="mainApp" value="" />
-	
-	<!-- output package direction,end with / -->
-	<property name="package" value="" />
-  
-  <property name="report.dir" value="${basedir}/target/test-results" />
-	
-  <target name="test" depends="compile">		
-    <mkdir dir="${report.dir}"/>  
-		<flexunit
-			timeout="10000"
-			swf="${DEPLOY_DIR}/${package}${fileNameTest}.swf"
-			toDir="${report.dir}"
-			haltonfailure="true" />
+	<property name="fileNameLocal" value="Harvester_LocalServer" />
+	<property name="fileExt" value="mxml" />
+
+	<property name="report.dir" value="${APP_ROOT}/target/test-results" />
+
+	<target name="unit-test" depends="compile">
+		<mkdir dir="${report.dir}" />
+		<copy file="${APP_ROOT}/AutomationGenericEnv.xml" toDir="${DEPLOY_DIR}/" />
+		<flexunit timeout="10000" swf="${DEPLOY_DIR}/${fileNameTest}.swf" toDir="${report.dir}" haltonfailure="true" />
 
 		<junitreport todir="${report.dir}">
 			<fileset dir="${report.dir}">
-		    	<include name="TEST-*.xml"/>
-		  	</fileset>		
-		  	<report format="frames" todir="${report.dir}/html"/>
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${report.dir}/html" />
 		</junitreport>
 		<delete>
-      <fileset dir="${report.dir}" includes="TEST-*.xml"></fileset>
-    </delete>
+			<fileset dir="${report.dir}" includes="TEST-*.xml">
+			</fileset>
+		</delete>
+	</target>
+
+	<target name="all" depends="deploy, package, publish-to-server" />
+
+	<target name="-compile-swf">
+		<mxmlc file="${APP_ROOT}/${mxmlFile}.${fileExt}" 
+		       output="${DEPLOY_DIR}/${mxmlFile}.swf" 
+		       actionscript-file-encoding="UTF-8" 
+		       keep-generated-actionscript="false" 
+		       incremental="true" accessible="true" 
+		       use-network="false">
+			<load-config filename="${FLEX_HOME}/frameworks/flex-config.xml" />
+			<source-path path-element="${FLEX_HOME}/frameworks" />
+			<source-path path-element="src" />
+			<source-path path-element="src-test"/>
+
+			<compiler.library-path dir="${FLEX_HOME}/frameworks" append="true">
+				<include name="lib" />
+				<include name="../bundles/{locale}" />
+			</compiler.library-path>
+			<compiler.include-libraries dir="${APP_ROOT}" append="false">
+				<include name="libs" />
+			</compiler.include-libraries>
+			<default-size width="500" height="600" />
+		</mxmlc>
+	</target>
+
+	<target name="compile" depends="cleanCompile, clean-report, collect-unittests">
+		<mkdir dir="${DEPLOY_DIR}" />
+
+		<antcall target="-compile-swf">
+			<param name="mxmlFile" value="${fileName}"/>
+		</antcall>
+		<antcall target="-compile-swf">
+			<param name="mxmlFile" value="${fileNameTest}"/>
+		</antcall>
+		 <antcall target="-compile-swf">
+			<param name="mxmlFile" value="${fileNameLocal}"/>
+		</antcall>
+	
+		<delete>
+			<fileset dir="${APP_ROOT}/" includes="${fileName}*.cache" defaultexcludes="false" />
+		</delete>
+	</target>
+
+	<target name="clean-report">
+		<delete dir="${report.dir}">
+		</delete>
+		<delete dir="${APP_ROOT}/generated" />
+	</target>
+
+	<target name="cleanCompile" if="${DEPLOY_DIR}">
+		<delete>
+			<fileset dir="${DEPLOY_DIR}/" includes="${fileName}*.swf" />
+			<fileset dir="${DEPLOY_DIR}/" includes="${fileNameTest}*.swf" />
+		</delete>
+	</target>
+
+	<target name="-generate-html-wrapper">
+		<html-wrapper title="Harvester" 
+					  width="100%" 
+					  height="100%" 
+					  application="flexApp" 
+					  swf="${mxmlFile}" 
+		              version-major="9" 
+		              version-minor="0" 
+		              version-revision="0" 
+		              history="true" 
+		              template="express-installation" 
+		              output="${DEPLOY_DIR}/" 
+		              file="${mxmlFile}.html"/>
+	</target>
+
+	<target name="deploy" depends="clean-wrapper, unit-test">
+		<antcall target="-generate-html-wrapper">
+			<param name="mxmlFile" value="${fileName}"/>
+		</antcall>
+		<antcall target="-generate-html-wrapper">
+			<param name="mxmlFile" value="${fileNameTest}"/>
+		</antcall>
+		<antcall target="-generate-html-wrapper">
+			<param name="mxmlFile" value="${fileNameLocal}"/>
+		</antcall>
+	</target>
+
+	<target name="package" description="Package files for QA">
+		<zip file="${DEPLOY_ZIP_DIR}/Harvester.zip">
+			<fileset dir="${DEPLOY_DIR}" includes="**/*" />
+		</zip>
+	</target>
+
+	<target name="clean-wrapper">
+		<delete dir="${DEPLOY_ZIP_DIR}" />
+		<delete dir="${APP_ROOT}/target" />
+	</target>
+
+	<target name="collect-unittests">
+		<java classname="com.allurent.flexunit.framework.AllTestsFileGenerator"
+              fork="true" failonerror="true" output="src-test/FlexUnitAllTests.as">
+			<classpath>
+				<pathelement location="${APP_ROOT}/libs/arc-flexunit.jar" />
+			</classpath>
+			<arg value="src-test/" />
+		</java>
+	</target>
+
+    <target name="start-tomcat" depends="stop-tomcat">
+        <java dir="${TOMCAT_HOME}/bin/" jar="${TOMCAT_HOME}/bin/bootstrap.jar" fork="true">
+            <arg value="start"/>   
+        </java>       
+    </target>  
+	
+	<target name="stop-tomcat">
+	    <java dir="${TOMCAT_HOME}/bin/" jar="${TOMCAT_HOME}/bin/bootstrap.jar" fork="true">
+	        <arg value="stop"/>   
+	    </java>       
+	</target>   		
+
+	<target name="publish-to-server">
+		 <copy todir="${TOMCAT_HOME}/webapps/${webapp}">
+    		<fileset dir="${DEPLOY_DIR}"/>
+    	</copy>
 	</target>
 	
-	<!-- compile a mxml/as file -->
-    <target name="all" depends="deploy, package" />
-    
-    <target name="compile" depends="cleanCompile, cleanReport">
-        <mkdir dir="${DEPLOY_DIR}" />
-    	
-        <mxmlc 
-            file="${APP_ROOT}/${package}${fileName}.${fileExt}" 
-            output="${DEPLOY_DIR}/${package}${fileName}.swf"
-            actionscript-file-encoding="UTF-8"
-            keep-generated-actionscript="false"
-            incremental="true"
-            accessible="true"
-            use-network="false"
-            >
-            <!-- Get default compiler options. -->
-            <load-config filename="${FLEX_HOME}/frameworks/flex-config.xml"/>            
-            <!-- List of path elements that form the roots of ActionScript class hierarchies. -->
-            <source-path path-element="${FLEX_HOME}/frameworks"/>
-            <source-path path-element="${basedir}/src"/>
-            <!-- List of SWC files or directories that contain SWC files. -->
-            <compiler.library-path dir="${FLEX_HOME}/frameworks" append="true">
-                <include name="lib" />
-                <include name="../bundles/{locale}" />
-            </compiler.library-path>
-
-            <!-- Set size of output SWF file. -->
-            <default-size width="500" height="600" />
-        </mxmlc>
-        <mxmlc 
-            file="${APP_ROOT}/${package}${fileNameTest}.${fileExt}" 
-            output="${DEPLOY_DIR}/${package}${fileNameTest}.swf"
-            actionscript-file-encoding="UTF-8"
-            keep-generated-actionscript="false"
-            incremental="true"
-            >
-            <!-- Get default compiler options. -->
-            <load-config filename="${FLEX_HOME}/frameworks/flex-config.xml"/>            
-            <!-- List of path elements that form the roots of ActionScript class hierarchies. -->
-            <source-path path-element="${FLEX_HOME}/frameworks"/>
-            <source-path path-element="${basedir}/src"/>
-            <source-path path-element="${basedir}/src-test"/>
-            <!-- List of SWC files or directories that contain SWC files. -->
-            <compiler.library-path dir="${FLEX_HOME}/frameworks" append="true">
-                <include name="lib" />
-                <include name="../bundles/{locale}" />
-            </compiler.library-path>
-            <compiler.include-libraries dir="${basedir}" append="true">
-                <include name="libs" />
-            </compiler.include-libraries>
-
-            <!-- Set size of output SWF file. -->
-            <default-size width="500" height="600" />
-        </mxmlc>
-        
-		<delete>
-            <!-- Deletes cache file -->
-            <fileset dir="${APP_ROOT}/${package}" includes="${fileName}*.cache" defaultexcludes="false"/>
-		</delete>
-    </target>
-    
-	<!-- clean preview previous compile file -->
-    <target name="cleanReport">
-      <delete dir="${report.dir}" ></delete>
-      <delete dir="${APP_ROOT}/${package}generated"/>
-    </target>
-    
-    <target name="cleanCompile" if="${DEPLOY_DIR}" >
-        <delete>
-            <fileset dir="${DEPLOY_DIR}/${package}" includes="${fileName}*.swf"/>
-            <fileset dir="${DEPLOY_DIR}/${package}" includes="${fileNameTest}*.swf"/>
-        </delete>
-    </target>
-     
-     
-     <target name="deploy" depends="cleanWrapper, test">
-        <html-wrapper 
-            title="AdDemand"
-            width="100%"
-            height="100%"
-            application="flexApp"
-            swf="${fileName}"
-            version-major="9"
-            version-minor="0"
-            version-revision="0"
-            history="true"              
-            template="express-installation"
-            output="${DEPLOY_DIR}/${package}"/>
-    	<move file="${DEPLOY_DIR}/${package}index.html" tofile="${DEPLOY_DIR}/${fileName}.html"/>
-      
-    </target>
-    
-    
-    <target name="package" description="Package files for QA">
-        <zip file="${DEPLOY_ZIP_DIR}/Harvester.zip">
-            <fileset dir="${DEPLOY_DIR}" includes="**/*"/>
-        </zip>
-    </target>
-    
-    <target name="cleanWrapper">
-        <delete dir="${DEPLOY_ZIP_DIR}"/>
-        <delete dir="${basedir}/target"/>
-    </target>        
 </project>
