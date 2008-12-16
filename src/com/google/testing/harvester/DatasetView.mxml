@@ -13,7 +13,7 @@
       <mx:List width="100%" height="100%"
         labelField="name"
         dataProvider="{controller.projects}"
-        change="controller.fetch(event.currentTarget.selectedItem)"/>
+        change="controller.fetch(event.currentTarget.selectedItem)" name="datasourceList"/>
       <mx:Button width="100%" label="(+) Add Project" click="controller.addProject(this)"/>
     </mx:Panel>
     <mx:VBox width="100%" height="100%" verticalAlign="middle">
@@ -28,19 +28,19 @@
           </mx:FormItem>
           <mx:FormItem label="CL:" width="100%">
             <mx:HBox width="100%">
-              <mx:Label text="{controller.dataset.first.cl}"  width="120"/>
+              <mx:Label name="firstCLLabel" text="{controller.dataset.first.cl}"  width="120"/>
               <mx:Label text="-"/>
-              <mx:Label text="{controller.dataset.last.cl}"  width="120"/>
+              <mx:Label name="lastCLLabel" text="{controller.dataset.last.cl}"  width="120"/>
               <mx:Spacer width="100%"/>
               <mx:Label text="Total:"/>
-              <mx:Label text="{controller.dataset.changelists.length}"/>
+              <mx:Label name="clCountLabel" text="{controller.dataset.changelists.length}"/>
             </mx:HBox>
           </mx:FormItem>
           <mx:FormItem label="Dates:" width="100%">
             <mx:HBox width="100%">
-              <mx:Label text="{dateFormater.format(controller.dataset.first.date)}"  width="120"/>
+              <mx:Label name="beginDateLabel" text="{dateFormater.format(controller.dataset.first.date)}"  width="120"/>
               <mx:Label text="-"/>
-              <mx:Label text="{dateFormater.format(controller.dataset.last.date)}"  width="120"/>
+              <mx:Label name="endDateLabel" text="{dateFormater.format(controller.dataset.last.date)}"  width="120"/>
             </mx:HBox>
           </mx:FormItem>
           <mx:FormItem label="Developers:" width="100%">
@@ -102,10 +102,12 @@
           <mx:FormItem label="Dates:" width="100%">
             <mx:HBox width="100%">
               <mx:DateField width="50%" 
+              	name="beginDateField"
                 selectedDate="{controller.filter.startDate}"
                 change="controller.filter.startDate = event.currentTarget.selectedDate"/>
               <mx:Label text="-"/>
               <mx:DateField width="50%"
+              	name="endDateField"
                 selectedDate="{controller.filter.endDate}"
                 change="controller.filter.endDate = event.currentTarget.selectedDate"/>
               <mx:Button label="All" click="controller.filterAllDates()"/>
@@ -114,10 +116,12 @@
           <mx:FormItem label="CLs:" width="100%">
             <mx:HBox width="100%">
               <mx:TextInput width="50%"
+              	name="startCLTextInput"
                 text="{controller.filter.startCL}"
                 change="controller.filter.startCL = int(event.currentTarget.text)"/>
               <mx:Label text="-"/>
               <mx:TextInput width="50%"
+              	name="endCLTextInput"
                 text="{controller.filter.endCL}"
                 change="controller.filter.endCL = int(event.currentTarget.text)"/>
               <mx:Button label="All" click="controller.filterAllCLs()"/>
@@ -150,7 +154,7 @@
             </mx:HBox>
           </mx:FormItem>
           <mx:FormItem label="CL Count:" width="100%">
-            <mx:Label text="{controller.filter.filteredCLs.length}"/>
+            <mx:Label name="clCountLabel" text="{controller.filter.filteredCLs.length}"/>
           </mx:FormItem>
         </mx:Form>
       </mx:Panel>
@@ -176,7 +180,7 @@
             </mx:HBox>
           </mx:FormItem>
           <mx:FormItem label="Count:" width="100%">
-            <mx:Label text="{controller.aggregate.aggregates.length}"/>
+            <mx:Label name="clCountLabel" text="{controller.aggregate.aggregates.length}"/>
           </mx:FormItem>
         </mx:Form>
       </mx:Panel>

@@ -8,7 +8,7 @@
         visible="{stack.selectedIndex > 0}" 
         click="stack.selectedIndex = 0"/>
     <mx:Spacer width="50%"/>
-    <mx:Label text="{datasetController.selectedProject.name}" fontWeight="bold" fontSize="15" fontFamily="Verdana"/>
+    <mx:Label name="projectNameLabel" text="{datasetController.selectedProject.name}" fontWeight="bold" fontSize="15" fontFamily="Verdana"/>
     <mx:Spacer width="50%"/>
     <mx:LinkButton label="Help" click="controller.help()"/>
   </mx:HBox>
