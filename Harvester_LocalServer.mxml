@@ -10,9 +10,12 @@
   
   <mx:Script>
 		<![CDATA[
+			import com.google.testing.harvester.MockServer;
 			import com.google.testing.harvester.ServerFactory;
 			
 			private function configServer():void {
+				// force compiler to compile MockServer class
+				var mockServer:MockServer = null;
 				ServerFactory.serverClassName = "com.google.testing.harvester.MockServer";
   			}
 			
