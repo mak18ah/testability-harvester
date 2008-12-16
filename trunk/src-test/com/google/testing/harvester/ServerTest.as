@@ -41,7 +41,7 @@ package com.google.testing.harvester {
       assertEquals("6958308", raw.cl);
       assertEquals("kcoleman", raw.user);
       assertEquals(Language.JAVA, raw.language);
-      assertEquals("Wed Apr 16 00:00:00 GMT-0700 2008", raw.date.toString());
+      assertEquals("Tue Apr 15 16:00:00 2008 UTC", raw.date.toUTCString());
       assertEquals(1, raw.productionAdded);
       assertEquals(2, raw.productionDeleted);
       assertEquals(3, raw.productionChanged);
