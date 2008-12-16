@@ -9,6 +9,7 @@ package com.google.testing.harvester {
     public static const CPP:Language = new Language("C++");
     public static const PYTHON:Language = new Language("Python");
     public static const JAVA_SCRIPT:Language = new Language("JavaScript");
+    public static const UNKNOWN:Language = new Language("Unknown");
     
     public static const ALL:Array = [JAVA, CPP, PYTHON, JAVA_SCRIPT];
     
@@ -24,7 +25,7 @@ package com.google.testing.harvester {
           return language;
         }
       }
-      throw new Error("Unknown language: " + name);
+      return UNKNOWN;
     }
     
     public function toString():String {

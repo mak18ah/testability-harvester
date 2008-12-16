@@ -12,14 +12,9 @@ package com.google.testing.harvester {
       assertEquals(Language.CPP, Language.parse("C++"));
       assertEquals(Language.PYTHON, Language.parse("Python"));
       assertEquals(Language.JAVA_SCRIPT, Language.parse("JavaScript"));
-    }
-    
-    public function testUnknoenLanguageThrowsError():void {
-      try {
-        Language.parse("X");
-        fail();
-      } catch (e:Error) {
-      }
+      
+      // unknown language
+	  assertEquals(Language.UNKNOWN, Language.parse("X"));
     }
     
   }
