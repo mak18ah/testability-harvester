@@ -8,11 +8,24 @@
 			import flexunit.framework.TestSuite;
 			import com.google.testing.harvester.*;
 			
-			// Create the test suite and run the tests
+			/**
+			 *  default runner
+			 * 
+			 * 	junit runner : when build the project, flex unit will communicate with junit to output the test suite info.
+			 */
+			
+			CONFIG::defaultRunner
 			private function onCreationComplete():void
 			{
-  				testRunner.test = FlexUnitAllTests.suite();
-                testRunner.startTest();
+				testRunner.test = FlexUnitAllTests.suite();
+               	testRunner.startTest();
+  			}
+  			
+  			CONFIG::junitRunner
+  			private function onCreationComplete():void
+			{
+                var testRunner : JUnitTestRunner  = new JUnitTestRunner();
+ 				testRunner.run(FlexUnitAllTests.suite());
   			}
 			
 		]]>

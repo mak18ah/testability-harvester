@@ -16,7 +16,7 @@
 	<property name="webapp" value="examples" />                                 <!-- Provided by properties file -->
 
 	<property name="fileName" value="Harvester" />
-	<property name="fileNameTest" value="Harvester_Test_For_Build" />
+	<property name="fileNameTest" value="Harvester_Test" />
 	<property name="fileNameLocal" value="Harvester_LocalServer" />
 	<property name="fileExt" value="mxml" />
 
@@ -52,6 +52,9 @@
 			<source-path path-element="${FLEX_HOME}/frameworks" />
 			<source-path path-element="src" />
 			<source-path path-element="src-test"/>
+			
+			<define name="CONFIG::defaultRunner" value="false"/>
+			<define name="CONFIG::junitRunner" value="true"/>
 
 			<compiler.library-path dir="${FLEX_HOME}/frameworks" append="true">
 				<include name="lib" />
