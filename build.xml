@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <project name="Harvester" basedir="." default="all">
-
+	<property file="testability-harvester.properties"/>
+	
 	<taskdef name="flexunit" classname="com.adobe.ac.ant.tasks.FlexUnitTask" classpath="${basedir}/libs/FlexAntTasks.jar"/>
 	<taskdef resource="flexTasks.tasks" classpath="${basedir}/libs/flexTasks.jar" />
 
 	<property environment="env" />
-	<property name="FLEX_HOME" value="${env.FLEX_HOME}" />                      <!-- Provided by properties file -->
+	<property name="FLEX_HOME" value="C:/Programme/Adobe/Flex_Builder_3_Plug-in/sdks/3.2.0" />                      <!-- Provided by properties file -->
 	<property name="APP_ROOT" value="." />
 	<property name="DEPLOY_ZIP_DIR" value="${basedir}/deploy" />
 	<property name="DEPLOY_DIR" value="${DEPLOY_ZIP_DIR}/artifacts" />
 
-	<property name="TOMCAT_HOME" value="C:\programme\apache-tomcat-6.0.16" />   <!-- Provided by properties file -->
+	<property name="tomcat.home" value="C:\programme\apache-tomcat-6.0.16" />   <!-- Provided by properties file -->
 	<property name="webapp" value="examples" />                                 <!-- Provided by properties file -->
 
 	<property name="fileName" value="Harvester" />
@@ -38,7 +39,7 @@
 		</delete>
 	</target>
 
-	<target name="all" depends="deploy, package, publish-to-server" />
+	<target name="all" depends="deploy, package" />
 
 	<target name="-compile-swf">
 		<mxmlc file="${APP_ROOT}/${mxmlFile}.${fileExt}" 
@@ -143,19 +144,19 @@
 	</target>
 
     <target name="start-tomcat" depends="stop-tomcat">
-        <java dir="${TOMCAT_HOME}/bin/" jar="${TOMCAT_HOME}/bin/bootstrap.jar" fork="true">
+        <java dir="${tomcat.home}/bin/" jar="${tomcat.home}/bin/bootstrap.jar" fork="true">
             <arg value="start"/>   
         </java>       
     </target>  
 	
 	<target name="stop-tomcat">
-	    <java dir="${TOMCAT_HOME}/bin/" jar="${TOMCAT_HOME}/bin/bootstrap.jar" fork="true">
+	    <java dir="${tomcat.home}/bin/" jar="${tomcat.home}/bin/bootstrap.jar" fork="true">
 	        <arg value="stop"/>   
 	    </java>       
 	</target>   		
 
 	<target name="publish-to-server">
-		 <copy todir="${TOMCAT_HOME}/webapps/${webapp}">
+		 <copy todir="${tomcat.home}/webapps/${webapp}">
     		<fileset dir="${DEPLOY_DIR}"/>
     	</copy>
 	</target>
