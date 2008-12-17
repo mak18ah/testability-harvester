@@ -16,7 +16,7 @@
 	<property name="webapp" value="examples" />                                 <!-- Provided by properties file -->
 
 	<property name="fileName" value="Harvester" />
-	<property name="fileNameTest" value="Harvester_Test" />
+	<property name="fileNameTest" value="Harvester_Test_For_Build" />
 	<property name="fileNameLocal" value="Harvester_LocalServer" />
 	<property name="fileExt" value="mxml" />
 
@@ -47,7 +47,7 @@
 		       actionscript-file-encoding="UTF-8" 
 		       keep-generated-actionscript="false" 
 		       incremental="true" accessible="true" 
-		       use-network="false">
+		       use-network="true">
 			<load-config filename="${FLEX_HOME}/frameworks/flex-config.xml" />
 			<source-path path-element="${FLEX_HOME}/frameworks" />
 			<source-path path-element="src" />
@@ -63,7 +63,7 @@
 			<default-size width="500" height="600" />
 		</mxmlc>
 	</target>
-
+	
 	<target name="compile" depends="cleanCompile, clean-report, collect-unittests">
 		<mkdir dir="${DEPLOY_DIR}" />
 
