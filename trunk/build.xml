@@ -51,7 +51,7 @@
 			<load-config filename="${FLEX_HOME}/frameworks/flex-config.xml" />
 			<source-path path-element="${FLEX_HOME}/frameworks" />
 			<source-path path-element="src" />
-			<source-path path-element="src-test"/>
+			<source-path path-element="src_test"/>
 			
 			<define name="CONFIG::defaultRunner" value="false"/>
 			<define name="CONFIG::junitRunner" value="true"/>
