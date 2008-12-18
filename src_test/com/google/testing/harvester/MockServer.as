@@ -5,16 +5,18 @@ package com.google.testing.harvester {
 	import mx.utils.StringUtil;
 	
 	import com.google.testing.harvester.MockServerData;
+	import com.google.testing.harvester.ProjectParser;
+	import com.google.testing.harvester.ChangeListParser;
 	
 	
 	public class MockServer extends Server {
 		
 		public override function fetchProjects(callback:Function):void {
-			callback(parseProjects(MockServerData.instance.getProjectsInfo()));
+			callback(new ProjectParser().parseProjects(MockServerData.instance.getProjectsInfo()));
 		}
 		
 		public override function fetchChangelists(name:String, callback:Function):void {
-			callback(parseChangeLists(MockServerData.instance.changelists(name)));
+			callback(new ChangeListParser().parseChangeLists(MockServerData.instance.changelists(name)));
 		}
 	    
 	    public override function saveProject(project:Project):void {
