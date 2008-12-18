@@ -17,6 +17,8 @@
 
 	<property name="src.dir" value="${APP_ROOT}/src"/>
 	<property name="src.test.dir" value="${APP_ROOT}/src_test"/>
+	<property name="generated.dir" value="${src.test.dir}/generated"/>
+	
 	
 	<property name="fileName" value="Harvester" />
 	<property name="fileNameTest" value="Harvester_Test" />
@@ -186,12 +188,14 @@
 	</target>
 
 	<target name="collect-unittests">
+		<mkdir dir="${generated.dir}"/>
 		<java classname="com.allurent.flexunit.framework.AllTestsFileGenerator"
-              fork="true" failonerror="true" output="src_test/FlexUnitAllTests.as">
+              fork="true" failonerror="true" output="${generated.dir}/FlexUnitAllTests.as">
 			<classpath>
 				<pathelement location="${APP_ROOT}/libs/arc-flexunit.jar" />
 			</classpath>
 			<arg value="src_test/" />
+			<arg value="generated" />
 		</java>
 	</target>
 
