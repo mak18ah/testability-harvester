@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" xmlns="*"
+				xmlns:flexunit="flexunit.flexui.*"
+				xmlns:harvester="com.google.testing.harvester.*" 
+				creationComplete="onCreationComplete()">
+	<mx:Script>
+		<![CDATA[
+			import flexunit.framework.TestSuite;
+			import com.google.testing.harvester.*;
+			
+			/**
+			 *  default runner
+			 * 
+			 * 	junit runner : when build the project, flex unit will communicate with junit to output the test suite info.
+			 */
+			
+			CONFIG::defaultRunner
+			private function onCreationComplete():void
+			{
+				testRunner.test = FlexUnitAllTests.suite();
+               	testRunner.startTest();
+  			}
+  			
+  			CONFIG::junitRunner
+  			private function onCreationComplete():void
+			{
+                var testRunner : JUnitTestRunner  = new JUnitTestRunner();
+ 				testRunner.run(FlexUnitAllTests.suite());
+  			}
+			
+		]]>
+	</mx:Script>
+
+	<!-- FlexUnit GUI Component -->
+	<flexunit:TestRunnerBase id="testRunner" width="100%" height="100%" />
+</mx:Application>

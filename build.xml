@@ -15,6 +15,9 @@
 	<property name="tomcat.home" value="C:\programme\apache-tomcat-6.0.16" />   <!-- Provided by properties file -->
 	<property name="webapp" value="examples" />                                 <!-- Provided by properties file -->
 
+	<property name="src.dir" value="${APP_ROOT}/src"/>
+	<property name="src.test.dir" value="${APP_ROOT}/src_test"/>
+	
 	<property name="fileName" value="Harvester" />
 	<property name="fileNameTest" value="Harvester_Test" />
 	<property name="fileNameLocal" value="Harvester_LocalServer" />
@@ -41,9 +44,61 @@
 
 	<target name="all" depends="deploy, package" />
 
-	<target name="-compile-swf">
-		<mxmlc file="${APP_ROOT}/${mxmlFile}.${fileExt}" 
-		       output="${DEPLOY_DIR}/${mxmlFile}.swf" 
+	<target name="-compile-harvester">
+		<mxmlc file="${src.dir}/${fileName}.${fileExt}" 
+		       output="${DEPLOY_DIR}/${fileName}.swf" 
+		       actionscript-file-encoding="UTF-8" 
+		       keep-generated-actionscript="false" 
+		       incremental="true" accessible="true" 
+		       use-network="true">
+			<load-config filename="${FLEX_HOME}/frameworks/flex-config.xml" />
+			<source-path path-element="${FLEX_HOME}/frameworks" />
+			<source-path path-element="src" />
+			<source-path path-element="src_test"/>
+			
+			<define name="CONFIG::defaultRunner" value="false"/>
+			<define name="CONFIG::junitRunner" value="true"/>
+
+			<compiler.library-path dir="${FLEX_HOME}/frameworks" append="true">
+				<include name="lib" />
+				<include name="../bundles/{locale}" />
+			</compiler.library-path>
+			<compiler.include-libraries dir="${APP_ROOT}" append="false">
+				<include name="libs" />
+			</compiler.include-libraries>
+			<default-size width="500" height="600" />
+		</mxmlc>
+	</target>
+	
+	<target name="-compile-harvester-localserver">
+		<mxmlc file="${src.test.dir}/${fileNameLocal}.${fileExt}" 
+		       output="${DEPLOY_DIR}/${fileNameLocal}.swf" 
+		       actionscript-file-encoding="UTF-8" 
+		       keep-generated-actionscript="false" 
+		       incremental="true" accessible="true" 
+		       use-network="true">
+			<load-config filename="${FLEX_HOME}/frameworks/flex-config.xml" />
+			<source-path path-element="${FLEX_HOME}/frameworks" />
+			<source-path path-element="src" />
+			<source-path path-element="src_test"/>
+			
+			<define name="CONFIG::defaultRunner" value="false"/>
+			<define name="CONFIG::junitRunner" value="true"/>
+
+			<compiler.library-path dir="${FLEX_HOME}/frameworks" append="true">
+				<include name="lib" />
+				<include name="../bundles/{locale}" />
+			</compiler.library-path>
+			<compiler.include-libraries dir="${APP_ROOT}" append="false">
+				<include name="libs" />
+			</compiler.include-libraries>
+			<default-size width="500" height="600" />
+		</mxmlc>
+	</target>
+	
+	<target name="-compile-harvester-test">
+		<mxmlc file="${src.test.dir}/${fileNameTest}.${fileExt}" 
+		       output="${DEPLOY_DIR}/${fileNameTest}.swf" 
 		       actionscript-file-encoding="UTF-8" 
 		       keep-generated-actionscript="false" 
 		       incremental="true" accessible="true" 
@@ -70,15 +125,9 @@
 	<target name="compile" depends="cleanCompile, clean-report, collect-unittests">
 		<mkdir dir="${DEPLOY_DIR}" />
 
-		<antcall target="-compile-swf">
-			<param name="mxmlFile" value="${fileName}"/>
-		</antcall>
-		<antcall target="-compile-swf">
-			<param name="mxmlFile" value="${fileNameTest}"/>
-		</antcall>
-		 <antcall target="-compile-swf">
-			<param name="mxmlFile" value="${fileNameLocal}"/>
-		</antcall>
+		<antcall target="-compile-harvester"/>
+		<antcall target="-compile-harvester-localserver"/>
+		<antcall target="-compile-harvester-test"/>
 	
 		<delete>
 			<fileset dir="${APP_ROOT}/" includes="${fileName}*.cache" defaultexcludes="false" />
@@ -138,11 +187,11 @@
 
 	<target name="collect-unittests">
 		<java classname="com.allurent.flexunit.framework.AllTestsFileGenerator"
-              fork="true" failonerror="true" output="src-test/FlexUnitAllTests.as">
+              fork="true" failonerror="true" output="src_test/FlexUnitAllTests.as">
 			<classpath>
 				<pathelement location="${APP_ROOT}/libs/arc-flexunit.jar" />
 			</classpath>
-			<arg value="src-test/" />
+			<arg value="src_test/" />
 		</java>
 	</target>
 
