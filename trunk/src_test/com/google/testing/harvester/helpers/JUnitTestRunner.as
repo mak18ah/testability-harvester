@@ -1,4 +1,4 @@
-package
+package com.google.testing.harvester.helpers
 {
 	import flash.events.DataEvent;
 	import flash.net.XMLSocket;

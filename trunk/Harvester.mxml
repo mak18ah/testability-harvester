@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright 2008 Google, Inc. All Rights Reserved. -->
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
-   				layout="vertical" 
-   				xmlns:harvester="com.google.testing.harvester.*" 
-   				backgroundGradientAlphas="[1.0, 1.0]" 
-   				backgroundGradientColors="[#FFFFFF, #FFFFFF]">
-  <harvester:ChromeView />
-</mx:Application>
