@@ -23,5 +23,9 @@ package com.google.testing.harvester {
     public function toRawString():String {
     	return "===\n" + toString();
     }
+    
+    public function equals(project:Project):Boolean {
+    	return path == project.path ? true : false;
+    }
   }
 }

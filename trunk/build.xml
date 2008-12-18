@@ -29,7 +29,6 @@
 
 	<target name="unit-test" depends="compile">
 		<mkdir dir="${report.dir}" />
-		<copy file="${APP_ROOT}/AutomationGenericEnv.xml" toDir="${DEPLOY_DIR}/" />
 		<flexunit timeout="10000" swf="${DEPLOY_DIR}/${fileNameTest}.swf" toDir="${report.dir}" haltonfailure="true" />
 
 		<junitreport todir="${report.dir}">
@@ -78,7 +77,7 @@
 		       actionscript-file-encoding="UTF-8" 
 		       keep-generated-actionscript="false" 
 		       incremental="true" accessible="true" 
-		       use-network="true">
+		       use-network="false">
 			<load-config filename="${FLEX_HOME}/frameworks/flex-config.xml" />
 			<source-path path-element="${FLEX_HOME}/frameworks" />
 			<source-path path-element="src" />
