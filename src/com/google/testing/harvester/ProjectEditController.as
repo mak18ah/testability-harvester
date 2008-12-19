@@ -1,6 +1,7 @@
 package com.google.testing.harvester {
   import flash.display.DisplayObject;
   
+  import mx.collections.ArrayCollection;
   import mx.controls.Alert;
   import mx.core.Application;
   import mx.managers.PopUpManager;
@@ -12,6 +13,7 @@ package com.google.testing.harvester {
     
     public var project:Project = new Project();
     public var editableProject:Project = new Project();
+    public var projects:ArrayCollection;
     
     public var parent:DisplayObject;
     
