@@ -2,16 +2,19 @@
 <mx:Panel 
   borderAlpha="1"
   xmlns:mx="http://www.adobe.com/2006/mxml" 
-  xmlns:harvester="com.google.testing.harvester.*" 
+  xmlns:harvester="com.google.testing.harvester.*"
+  xmlns:validator="com.google.testing.harvester.validators.*"
   title="Project Configuration">
   <harvester:ProjectEditController id="controller"/>
+  <validator:ProjectUniqueValidator id="projectUniqueValidator" 
+      source="{path}" property="text" listener="{path}" trigger="{path}" triggerEvent="focusOut" projects="{controller.projects}"/>
   <mx:Form width="600">
     <mx:FormItem label="Name:" width="100%">
       <mx:TextInput width="100%" text="{controller.editableProject.name}"
         change="controller.editableProject.name = event.target.text"/>
     </mx:FormItem>
     <mx:FormItem label="Path:" width="100%">
-      <mx:TextArea width="100%" text="{controller.editableProject.path}" height="100"
+      <mx:TextArea id="path" width="100%" text="{controller.editableProject.path}" height="100"
         change="controller.editableProject.path = event.target.text"/>
     </mx:FormItem>
     <mx:FormItem label="Developers:" width="100%">
@@ -22,7 +25,7 @@
       <mx:HBox width="100%" height="100%">
         <mx:Spacer width="100%" height="100%"/>
         <mx:Button label="Cancel" click="controller.cancel()"/>
-        <mx:Button label="{controller.applyButtonLabel}" click="controller.apply()"/>
+        <mx:Button label="{controller.applyButtonLabel}" click="controller.apply()" enabled="{projectUniqueValidator.valid}"/>
       </mx:HBox>
     </mx:FormItem>
   </mx:Form>

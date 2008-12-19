@@ -20,7 +20,7 @@
                   newDataset="charts.selectedChangelists.removeAll()"
                   visualize="stack.selectedIndex = 1">
           <harvester:projectEditController>
-            <harvester:ProjectEditController parent="{this}"/>
+            <harvester:ProjectEditController parent="{this}" projects="{datasetController.projects}" />
           </harvester:projectEditController>
         </harvester:DatasetController> 
       </harvester:controller>
