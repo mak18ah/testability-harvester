@@ -15,5 +15,14 @@ package com.google.testing.harvester {
       assertEquals("C", controller.editableProject.developers);
     }   
     
+    public function testShouldNotPopupWindowWhenProjectIsNotSelected():void {
+      controller.showWindow(null);
+      
+      assertNull(controller.project);
+      assertNull(controller.applyButtonLabel);
+      assertEquals("", controller.editableProject.path);
+      assertEquals("", controller.editableProject.name);
+      assertEquals("", controller.editableProject.developers);
+    }
   }
 }

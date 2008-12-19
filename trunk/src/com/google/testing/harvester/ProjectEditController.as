@@ -39,13 +39,18 @@ package com.google.testing.harvester {
     }
     
     public function showWindow(project:Project):void {
+      if (project == null) {
+        Alert.show("Please select a project.");
+        return;
+      }
+      
       view = ProjectEditView(
         PopUpManager.createPopUp(parent, ProjectEditView, true));
       this.project = project;
       view.controller = this;
       copy(project, editableProject);
       applyButtonLabel = project.name == null ? "Create" : "Update";
-  
+      
       var app:Application = Application.application as Application;
       view.x = (app.width - view.width) / 2;
       view.y = (app.height - view.height) / 2;
