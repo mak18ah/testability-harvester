@@ -3,9 +3,13 @@ package com.google.testing.harvester {
 
   public class ProjectEditControllerTest extends TestCase {
     
-    private var controller:ProjectEditController = new ProjectEditController();
+    private var controller:ProjectEditController = null;
     
-    public function testCancel():void {
+    public override function setUp():void {
+    	 controller = new ProjectEditController();
+    }
+    
+    public function testCopy():void {
       controller.project.name = "A";
       controller.project.path = "B";
       controller.project.developers = "C";
@@ -16,13 +20,14 @@ package com.google.testing.harvester {
     }   
     
     public function testShouldNotPopupWindowWhenProjectIsNotSelected():void {
+      var originalProject:Project = controller.project;
       controller.showWindow(null);
       
-      assertNull(controller.project);
+      assertTrue(originalProject == controller.project);
       assertNull(controller.applyButtonLabel);
-      assertEquals("", controller.editableProject.path);
-      assertEquals("", controller.editableProject.name);
-      assertEquals("", controller.editableProject.developers);
+      assertNull(controller.editableProject.path);
+      assertNull(controller.editableProject.name);
+      assertNull(controller.editableProject.developers);
     }
   }
 }

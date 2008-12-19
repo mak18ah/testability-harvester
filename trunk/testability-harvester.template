@@ -1,0 +1,5 @@
+FLEX_HOME=/Flex_SDK
+
+tomcat.home=/apache-tomcat-6.0.18/bin/
+
+webapp=examples/Harvester_LocalServer.html
