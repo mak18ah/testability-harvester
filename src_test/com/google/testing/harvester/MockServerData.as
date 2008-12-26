@@ -21,26 +21,27 @@ package com.google.testing.harvester {
 		public var projectChangListMap : Dictionary = new Dictionary();
 		public var projects : Array = [];
 		
-		private var project1:Project = createProject("Dev1,Dev2,Dev3", "Project1", "http://localhost");
-		private var project2:Project = createProject("Dev2,Dev3", "Project2", "http://localhost2");
+		private var project1:Project = createProject(1, "Dev1,Dev2,Dev3", "Project1", "http://localhost");
+		private var project2:Project = createProject(2, "Dev2,Dev3", "Project2", "http://localhost2");
 		
 		public function MockServerData() {
 			projects.push(project1);
 			projects.push(project2);
-			projectChangListMap[project1.name] = changeList1;
-			projectChangListMap[project2.name] = changeList2;
+			projectChangListMap[project1.id] = changeList1;
+			projectChangListMap[project2.id] = changeList2;
 		}
 		
 		public static var instance:MockServerData = new MockServerData();
 		
-		public function changelists(name:String):String {
-			var changeLists:String = projectChangListMap[name];
+		public function changelists(id:int):String {
+			var changeLists:String = projectChangListMap[id];
 			if (changeLists == null) changeLists = "";
 			return changeLists;
 		}
 		
-		public function createProject(developers:String, proName:String, path:String):Project {
+		public function createProject(id:int, developers:String, proName:String, path:String):Project {
 			var project:Project = new Project();
+			project.id = id;
 			project.developers = developers;
 			project.name = proName;
 			project.path = path;
@@ -48,8 +49,8 @@ package com.google.testing.harvester {
 			return project;
 		}
 		
-		public function addProjectAndChangeList(proName:String, changeLists:String):void {
-			projectChangListMap[proName] = changeLists;
+		public function addProjectAndChangeList(proID:int, changeLists:String):void {
+			projectChangListMap[proID] = changeLists;
 		}
 		
 		public function getProjectsInfo():String {
