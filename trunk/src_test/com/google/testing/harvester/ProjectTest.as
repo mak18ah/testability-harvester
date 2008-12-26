@@ -24,16 +24,17 @@ package com.google.testing.harvester {
 		private var project4:Project = null;
 		
 		public override function setUp():void{
-			project1 = createProject("Harvester","http://localhost","David,Isaac");	
-			project2 = createProject("Harvester2","http://localhost","David,Isaac");	
-			project3 = createProject("Gmal","mail.google.com","Tom");	
-			project4 = createProject("Harvester","http://localhost","David");	
+			project1 = createProject(1, "Harvester","http://localhost","David,Isaac");	
+			project2 = createProject(1, "Harvester2","http://localhost","David,Isaac");	
+			project3 = createProject(2, "Gmal","mail.google.com","Tom");	
+			project4 = createProject(1, "Harvester","http://localhost","David");	
 		}
 		
-		public function createProject(name:String, path:String, developers:String):Project {
+		public function createProject(id:int, name:String, path:String, developers:String):Project {
 			var project:Project = new Project();
 			project = new Project();
 			
+			project.id = id;
 			project.name = name;
 			project.path = path;
 			project.developers = developers;
@@ -44,6 +45,7 @@ package com.google.testing.harvester {
 		public function testToRawString():void {
 			var raw:String ="===\n" + 
 							"developers:David,Isaac\n" +
+							"id:1\n" +
 							"name:Harvester\n" + 
 							"path:http://localhost\n";
 				
