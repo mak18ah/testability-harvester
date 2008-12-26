@@ -18,6 +18,7 @@ package com.google.testing.harvester {
   
   [Bindable]
   public class Project {
+  	public var id:int
     public var name:String;
     public var path:String;
     public var developers:String;
@@ -40,7 +41,7 @@ package com.google.testing.harvester {
     }
     
     public function equals(project:Project):Boolean {
-    	return path == project.path ? true : false;
+    	return id == project.id ? true : false;
     }
   }
 }

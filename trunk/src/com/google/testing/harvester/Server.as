@@ -47,9 +47,9 @@ package com.google.testing.harvester {
     /**
      * Load data set from web-service for a specific project.
      */
-    public function fetchChangelists(name:String, callback:Function):void {
+    public function fetchChangelists(id:int, callback:Function):void {
       var httpService:HTTPService = new HTTPService();
-      httpService.request = {path:name + ".csv"};
+      httpService.request = {path:id};
       httpService.url = URL_DATA;
       httpService.addEventListener(ResultEvent.RESULT, 
         function(event:ResultEvent):void {
@@ -65,7 +65,7 @@ package com.google.testing.harvester {
     public function saveProject(project:Project):void {
       var service:HTTPService = new HTTPService();
       service.url = URL_DATA;
-      service.request = {path:project.name + ".info", data:project.toString()};
+      service.request = {path:project.id, data:project.toString()};
       service.addEventListener(FaultEvent.FAULT, 
         function (event:FaultEvent):void {
           Alert.show(event.toString());
