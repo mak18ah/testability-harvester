@@ -56,7 +56,7 @@ package com.google.testing.harvester {
     public function fetch(project:Project):void {
       selectedProject = project;
       server.fetchChangelists(
-          selectedProject.name,
+          selectedProject.id,
           processNewDataset
         );
     }
