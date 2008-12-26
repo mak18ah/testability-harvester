@@ -36,7 +36,7 @@ class save:
         input = web.input()
         proID = input.id
         proString = input.projectString
-        return application.saveProject(projectString, proID)
+        return application.saveProject(proString, proID)
     
     def POST(self):
         self.GET()
