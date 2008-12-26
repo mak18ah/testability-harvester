@@ -8,46 +8,27 @@ urls = (
 
 app = web.application(urls, globals())
 
-scmReader = MockReader()
+scmReader = SVNReader()
 application = Application(scmReader)
-
-id = -1
-projectString1 = """===
-developers:dev1,dev2
-name:harvester
-path:http://testability-harvester.googlecode.com/svn"""
-
-projectString11 = """===
-developers:dev1,dev2
-name:T-H
-path:http://testability-harvester.googlecode.com/svn"""
-
-
-projectString2 = """===
-developers:dev3,dev4
-name:svn-digester
-path:http://svn-digester.googlecode.com/svn"""
-
-hId = application.saveProject(projectString1, id)
-svdId = application.saveProject(projectString2, id)
-
 
 class csv:        
     def GET(self):
-        proPath = web.input().path
-        return application.changeSetWithCSVFormat(proPath)
+        proID = web.input().id
+        return application.toCSV(proID)
         
     def POST(self):
-        proPath = web.input().path
-        return application.changeSetWithCSVFormat(proPath)
-    
+        self.GET()
 
 class projects:        
     def GET(self):
-         return application.projects() 
+        if len(web.input()) == 0:
+            return application.projects()
+        else:
+            proID = web.input().id
+            return application.find(proID)
 
     def POST(self):
-         return application.projects() 
+         self.GET()
 
 
 class save:
@@ -55,7 +36,7 @@ class save:
         input = web.input()
         proID = input.id
         proString = input.projectString
-        return application.saveProject(id, projectString)
+        return application.saveProject(projectString, proID)
     
     def POST(self):
         self.GET()
