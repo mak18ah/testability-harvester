@@ -26,12 +26,12 @@ class Project:
     
 class ChangeSet:
     
-    def __init__(self, number, author, date, files):
+    def __init__(self, number, author, date, files, path):
         self.number = number
         self.author = author
         self.date = date # String for easy implement
         self.files = files
-        self.path = ''
+        self.path = path
     
     def fetchFiles(self, scmReader):
         for file in self.files:
@@ -97,7 +97,7 @@ class File:
     def getLanguage(self, path):
         ext = os.path.splitext(path)[1][1:].lower()
         if not ext in langMap:
-            return Language.Other
+            return 'Other'
         return langMap[ext]
        
 
@@ -107,7 +107,10 @@ class AddedFile(File):
         File.__init__(self, path)
     
     def fetch(self, changeSet, scmReader):
-        content = scmReader.cat(changeSet.path, self.path, changeSet.number)
+        if self.language == 'Other':
+            content = ''
+        else:
+            content = scmReader.cat(changeSet.path, self.path, changeSet.number)
         self.content = content
 
     def countAddedLines(self):
@@ -121,7 +124,10 @@ class DeletedFile(File):
         self.content = ''
     
     def fetch(self, changeSet, scmReader):
-        content = scmReader.cat(changeSet.path, self.path, changeSet.number - 1)
+        if self.language == 'Other':
+            content = ''
+        else:
+            content = scmReader.cat(changeSet.path, self.path, changeSet.number - 1)
         self.content = content
 
     def countDeletedLines(self):
@@ -139,13 +145,13 @@ class ModifiedFile(File):
         self.diff.analyse()
 
     def countAddedLines(self):
-        return diff.countAddedLines()
+        return self.diff.countAddedLines()
     
     def countDeletedLines(self):
-        return diff.countDeletedLines()
+        return self.diff.countDeletedLines()
     
     def countModifiedLines(self):
-        return diff.countModifiedLines()   
+        return self.diff.countModifiedLines()   
 
 
 class Diff:

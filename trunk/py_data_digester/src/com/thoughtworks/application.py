@@ -9,7 +9,7 @@ class Application:
     
     def find(self, id):
         if id in self.map:
-            return self.map[id]
+            return serialized(self.map[id])
     
     def projects(self):
         str = ""
