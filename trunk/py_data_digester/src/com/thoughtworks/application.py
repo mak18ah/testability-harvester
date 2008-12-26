@@ -5,7 +5,6 @@ class Application:
     def __init__(self, scmReader=None):
         self.scmReader = scmReader
         self.map = {}
-        self.id = -1
     
     def find(self, id):
         if id in self.map:
@@ -17,22 +16,19 @@ class Application:
             str += serialize(p)
         return str
     
-    def saveProject(self, projectString, id=-1):
+    def saveProject(self, projectString):
         project = deserialize(projectString)
         project.scmReader = self.scmReader
         project.fetchChangeSets()
         
-        if id == -1:    # Create New Project
-            self.id += 1
-            project.id = self.id
-            self.map[self.id] = project
-            return self.id
-        else:           # Update Existing Project
-            projectFound = self.map[id]
+        if project.id in self.map:    # Create New Project
+            projectFound = self.map[project.id]
             projectFound.name = project.name
             projectFound.developers = project.developers
             projectFound.path = project.path
-            return projectFound.id  
+        else:           # Update Existing Project
+            self.map[project.id] = project
+        return project.id
         
     def toCSV(self, id):
         project = self.find(id) 
