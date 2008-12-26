@@ -1,13 +1,15 @@
 import os
 
 class Project:
-    
+    id = -1
     def __init__(self, scmReader=None, developer='', name='', path=''):
         self.scmReader = scmReader
         self.developers = developer
         self.name = name
         self.path = path
         self.changeSets = []
+        Project.id += 1
+        self.id = Project.id
         
     def fetchChangeSets(self):
         changeSets = self.scmReader.changeSets(self.path)
@@ -199,6 +201,7 @@ testPats = [re.compile(pat) for pat in testPats_without_compile]
 def serialize(project):
     return "===\n" + \
            "developers:" + project.developers + "\n" + \
+           "id:" + project.id + "\n" + \
            "name:" + project.name + "\n" + \
            "path:" + project.path + '\n'
 
@@ -206,10 +209,14 @@ def deserialize(projectString):
     project = Project()
     lines = projectString.split('\n')
     project.developers = lines[1][len('developers:'):]
-    project.name = lines[2][len('name:'):]
-    project.path = lines[3][len('path:'):]
+    if lines[2].startswith('id'):
+        project.id = int(lines[2][len('id:'):])
+        project.name = lines[3][len('name:'):]
+        project.path = lines[4][len('path:'):]
+    else:
+        project.name = lines[2][len('name:'):]
+        project.path = lines[3][len('path:'):]
     return project
 
 def shouldStatistics(file):
     return file.language != 'Other'
-
