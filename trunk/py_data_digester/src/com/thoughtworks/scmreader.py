@@ -15,32 +15,13 @@ class SCMReader:
         pass
     
 
-class MockReader(SCMReader):
+class SCMReaderStub(SCMReader):
     
     def changeSets(self, proPath):
-        
-        #def __init__(self, number, author, date, files):
-        files = []
-        files.append(AddedFile('src/TestCase.java'))
-        files.append(DeletedFile('src/TestCase.java'))
-        
-        changeSet = ChangeSet(1, 'isaachanStar', '2008-12-12 12:09:12', files)
-        return [changeSet]
+        return []
     
     def cat(self, projectPath, filePath, revision):
-        return '''class
-but sdfsd
-sdf
-sdfsdaf
-sadfsdaf
-dsd
-ssdfsdf'''
+        return ''
     
     def diff(self, projectPath, filePath, sourceRevisionNumber, targetRevisionNumber):
-        return '''+ public class
--public static class
-  public void f() {
-+  xxxx   
-  }
-+'''
-    
+        return ''

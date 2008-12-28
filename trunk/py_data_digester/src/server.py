@@ -8,7 +8,7 @@ urls = (
 
 app = web.application(urls, globals())
 
-scmReader = MockReader()
+scmReader = SVNReader()
 application = Application(scmReader)
 
 id = -1

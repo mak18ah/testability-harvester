@@ -1,7 +1,38 @@
 from com.thoughtworks.application import *
 from com.thoughtworks.scmreader import *
 
-scmreader = MockReader()
+################################################
+# Mock SCMReader for testing
+################################################
+class MockSCMReader(SCMReader):
+    
+    def changeSets(self, proPath):
+        files = []
+        files.append(AddedFile('src/TestCase.java'))
+        files.append(DeletedFile('src/TestCase.java'))
+        
+        changeSet = ChangeSet(1, 'isaachanStar', '2008-12-12 12:09:12', files)
+        return [changeSet]
+    
+    def cat(self, projectPath, filePath, revision):
+        return '''class
+but sdfsd
+sdf
+sdfsdaf
+sadfsdaf
+dsd
+ssdfsdf'''
+    
+    def diff(self, projectPath, filePath, sourceRevisionNumber, targetRevisionNumber):
+        return '''+ public class
+-public static class
+  public void f() {
++  xxxx   
+  }
++'''
+
+
+scmreader = MockSCMReader()
 application = Application(scmreader)
 
 id = -1
@@ -42,10 +73,7 @@ print '==================================================='
 print '!!!!!Get CSV of Harvester!!!!!'
 print application.toCSV(hId)
 
-#
-#print '!!!!!Get CSV of svn-digester!!!!!'
-#print application.changeSetWithCSVFormat(svdId)
-
-
+print '!!!!!Get CSV of svn-digester!!!!!'
+print application.changeSetWithCSVFormat(svdId)
 
 
