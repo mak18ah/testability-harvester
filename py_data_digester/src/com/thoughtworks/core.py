@@ -1,15 +1,13 @@
 import os
 
 class Project:
-    id = -1
+    
     def __init__(self, scmReader=None, developer='', name='', path=''):
         self.scmReader = scmReader
         self.developers = developer
         self.name = name
         self.path = path
         self.changeSets = []
-        Project.id += 1
-        self.id = Project.id
         
     def fetchChangeSets(self):
         changeSets = self.scmReader.changeSets(self.path)
@@ -28,12 +26,12 @@ class Project:
     
 class ChangeSet:
     
-    def __init__(self, number, author, date, files, path):
+    def __init__(self, number, author, date, files):
         self.number = number
         self.author = author
         self.date = date # String for easy implement
         self.files = files
-        self.path = path
+        self.path = ''
     
     def fetchFiles(self, scmReader):
         for file in self.files:
@@ -99,7 +97,7 @@ class File:
     def getLanguage(self, path):
         ext = os.path.splitext(path)[1][1:].lower()
         if not ext in langMap:
-            return 'Other'
+            return Language.Other
         return langMap[ext]
        
 
@@ -109,10 +107,7 @@ class AddedFile(File):
         File.__init__(self, path)
     
     def fetch(self, changeSet, scmReader):
-        if self.language == 'Other':
-            content = ''
-        else:
-            content = scmReader.cat(changeSet.path, self.path, changeSet.number)
+        content = scmReader.cat(changeSet.path, self.path, changeSet.number)
         self.content = content
 
     def countAddedLines(self):
@@ -126,10 +121,7 @@ class DeletedFile(File):
         self.content = ''
     
     def fetch(self, changeSet, scmReader):
-        if self.language == 'Other':
-            content = ''
-        else:
-            content = scmReader.cat(changeSet.path, self.path, changeSet.number - 1)
+        content = scmReader.cat(changeSet.path, self.path, changeSet.number - 1)
         self.content = content
 
     def countDeletedLines(self):
@@ -147,13 +139,13 @@ class ModifiedFile(File):
         self.diff.analyse()
 
     def countAddedLines(self):
-        return self.diff.countAddedLines()
+        return diff.countAddedLines()
     
     def countDeletedLines(self):
-        return self.diff.countDeletedLines()
+        return diff.countDeletedLines()
     
     def countModifiedLines(self):
-        return self.diff.countModifiedLines()   
+        return diff.countModifiedLines()   
 
 
 class Diff:
@@ -201,7 +193,6 @@ testPats = [re.compile(pat) for pat in testPats_without_compile]
 def serialize(project):
     return "===\n" + \
            "developers:" + project.developers + "\n" + \
-           "id:" + project.id + "\n" + \
            "name:" + project.name + "\n" + \
            "path:" + project.path + '\n'
 
@@ -209,14 +200,10 @@ def deserialize(projectString):
     project = Project()
     lines = projectString.split('\n')
     project.developers = lines[1][len('developers:'):]
-    if lines[2].startswith('id'):
-        project.id = int(lines[2][len('id:'):])
-        project.name = lines[3][len('name:'):]
-        project.path = lines[4][len('path:'):]
-    else:
-        project.name = lines[2][len('name:'):]
-        project.path = lines[3][len('path:'):]
+    project.name = lines[2][len('name:'):]
+    project.path = lines[3][len('path:'):]
     return project
 
 def shouldStatistics(file):
     return file.language != 'Other'
+
