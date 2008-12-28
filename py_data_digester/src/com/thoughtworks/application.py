@@ -10,31 +10,35 @@ class Application:
     def find(self, id):
         if id in self.map:
             return self.map[id]
-    
+        
     def projects(self):
         str = ""
         for p in self.map.values():
             str += serialize(p)
         return str
     
-    def saveProject(self, projectString, id=-1):
+    def saveProject(self, projectString):
+        p = deserialize(projectString)
+        p.id = self.generateIdForProject()
+        p.scmReader = self.scmReader
+        p.fetchChangeSets()
+        
+        self.map[p.id] = p
+        return p.id 
+    
+    def updateProject(self, projectString, id):
         project = deserialize(projectString)
-        project.scmReader = self.scmReader
-        project.fetchChangeSets()
-        
-        if id == -1:    # Create New Project
-            self.id += 1
-            project.id = self.id
-            self.map[self.id] = project
-            return self.id
-        else:           # Update Existing Project
-            projectFound = self.map[id]
-            projectFound.name = project.name
-            projectFound.developers = project.developers
-            projectFound.path = project.path
-            return projectFound.id  
-        
+        p = self.map[id]
+        p.name = project.name
+        p.developers = project.developers
+        p.path = project.path
+    
     def toCSV(self, id):
         project = self.find(id) 
         return project.toCSV()
     
+    def generateIdForProject(self):
+        id = -1
+        for i in self.map:
+            if id <= i: id = i
+        return id + 1
