@@ -2,9 +2,10 @@ import os
 
 class Project:
     
-    def __init__(self, scmReader=None, developer='', name='', path=''):
+    def __init__(self, scmReader=None, developer='', id=-1, name='', path=''):
         self.scmReader = scmReader
         self.developers = developer
+        self.id = id
         self.name = name
         self.path = path
         self.changeSets = []
