@@ -33,6 +33,7 @@ ssdfsdf'''
 
 
 scmreader = MockSCMReader()
+#scmreader = SVNReader()
 application = Application(scmreader)
 
 id = -1
@@ -52,8 +53,8 @@ developers:dev3,dev4
 name:svn-digester
 path:http://svn-digester.googlecode.com/svn"""
 
-hId = application.saveProject(projectString1, id)
-svdId = application.saveProject(projectString2, id)
+hId = application.saveProject(projectString1)
+svdId = application.saveProject(projectString2)
 
 print 'Two projects have been saved.'
 print '    Project 1 named: ' + application.find(0).name
@@ -64,7 +65,7 @@ print application.projects()
 print '==================================================='
 
 print 'Update first project name to T-H'
-application.saveProject(projectString11, hId)
+application.updateProject(projectString11, hId)
 
 print '======Get Updated All Projects Information:========'
 print application.projects()
@@ -74,6 +75,6 @@ print '!!!!!Get CSV of Harvester!!!!!'
 print application.toCSV(hId)
 
 print '!!!!!Get CSV of svn-digester!!!!!'
-print application.changeSetWithCSVFormat(svdId)
+print application.toCSV(svdId)
 
 
