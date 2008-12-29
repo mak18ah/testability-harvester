@@ -108,6 +108,7 @@ class AddedFile(File):
     
     def __init__(self, path):
         File.__init__(self, path)
+        self.content = ''
     
     def fetch(self, changeSet, scmReader):
         content = scmReader.cat(changeSet.path, self.path, changeSet.number)
@@ -142,13 +143,13 @@ class ModifiedFile(File):
         self.diff.analyse()
 
     def countAddedLines(self):
-        return diff.countAddedLines()
+        return self.diff.countAddedLines()
     
     def countDeletedLines(self):
-        return diff.countDeletedLines()
+        return self.diff.countDeletedLines()
     
     def countModifiedLines(self):
-        return diff.countModifiedLines()   
+        return self.diff.countModifiedLines()   
 
 
 class Diff:
@@ -162,6 +163,8 @@ class Diff:
     def analyse(self):
         suspicion = False
         for prefix in self.content.split('\n'):
+            if prefix.startswith('---'): continue
+            if prefix.startswith('+++'): continue
             if prefix.startswith('-'):
                 self.__deleted += 1
                 suspicion = True
