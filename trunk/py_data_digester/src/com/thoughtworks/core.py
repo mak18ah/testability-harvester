@@ -19,7 +19,7 @@ class Project:
         self.changeSets = changeSets
         
     def toCSV(self):
-        csv = ""
+        csv = ''
         for cs in self.changeSets:
             csv += cs.toCSV() + '\n'
         return csv
@@ -40,19 +40,19 @@ class ChangeSet:
                 file.fetch(self, scmReader)
 
     def toCSV(self):
-        return str(self.number) + "," + self.author + "," + \
-               self.csvLanguage() + "," + self.csvDate() + "," + \
-               "null" + "," + self.csvAffectedLines()
+        return str(self.number) + ',' + self.author + ',' + \
+               self.csvLanguage() + ',' + self.csvDate() + ',' + \
+               'null' + ',' + self.csvAffectedLines()
     
     def csvLanguage(self):
-        lang = ""
+        lang = ''
         for f in self.files:
             if lang.find(f.language) == -1:
-                lang += ";" + f.language
+                lang += ';' + f.language
         return lang[1:]
     
     def csvDate(self):
-        return self.date[0:len("yyyy-MM-dd hh:mm:ss")]
+        return self.date[0:len('yyyy-MM-dd hh:mm:ss')]
     
     def csvAffectedLines(self):
         pA = pD = pM = 0
@@ -68,15 +68,15 @@ class ChangeSet:
                 tD += f.countDeletedLines()
                 tM += f.countModifiedLines()
                 
-        return str(pA) + "," + str(pM) + "," + str(pD) + "," + str(tA) + "," + str(tM) + "," + str(tD)
+        return str(pA) + ',' + str(pM) + ',' + str(pD) + ',' + str(tA) + ',' + str(tM) + ',' + str(tD)
          
 
 class File:
     
     def __init__(self, path):
         self.path = path
-        self.language = self.getLanguage(path)
-        self.type = self.getType(path) # P-Production, T-Test, O-Other
+        self.setLanguage(path)
+        self.setType(path) # P-Production, T-Test, O-Other
     
     def fetch(self, changeSet, scmReader):
         pass
@@ -87,19 +87,21 @@ class File:
     def countModifiedLines(self):
         return 0
     
-    def getType(self, path):
+    def setType(self, path):
         if self.language == 'Other':
-            return 'O'
+            self.type = 'O'
         for pat in testPats:
             if pat.match(path):
-                return 'T'
-        return 'P'
+                self.type = 'T'
+                return
+        self.type = 'P'
         
-    def getLanguage(self, path):
+    def setLanguage(self, path):
         ext = os.path.splitext(path)[1][1:].lower()
         if not ext in langMap:
-            return Language.Other
-        return langMap[ext]
+            self.language = 'Other'
+            return
+        self.language = langMap[ext]
        
 
 class AddedFile(File):
@@ -183,19 +185,19 @@ class Diff:
         return self.__modified    
 
 
-langMap = {"java": 'Java',
-           "py":   'Python',
-           "rb":   'Ruby',
-           "as":   'ActionScript' }   
+langMap = {'java': 'Java',
+           'py':   'Python',
+           'rb':   'Ruby',
+           'as':   'ActionScript' }   
 
 testPats_without_compile = [] # Patterns for match test code
 testPats = [re.compile(pat) for pat in testPats_without_compile]
 
 def serialize(project):
-    return "===\n" + \
-           "developers:" + project.developers + "\n" + \
-           "name:" + project.name + "\n" + \
-           "path:" + project.path + '\n'
+    return '===\n' + \
+           'developers:' + project.developers + '\n' + \
+           'name:' + project.name + '\n' + \
+           'path:' + project.path + '\n'
 
 def deserialize(projectString):
     project = Project()
