@@ -21,21 +21,39 @@ class SVNReader(SCMReader):
         self.client = Client()
 
     def changeSets(self, proPath):
+        logger.info("SVNReader.changeSets - Start loading changesets from SVN...")
         logMessages = self.client.log(proPath, discover_changed_paths=True)
-        return self.parseLogToChangeSets(logMessages, proPath)
+        logger.info("SVNReader.changeSets - Finish loading changesets from SVN...")
+        
+        logger.info("SVNReader.changeSets - Start Parsing ChangeSets...")
+        changeSets = self.parseLogToChangeSets(logMessages, proPath)
+        logger.info("SVNReader.changeSets - Finish Parsing ChangeSets...")
+        
+        return changeSets
     
     def cat(self, projectPath, filePath, revision):
+        logger.info("SVNReader.cat - Start concatenating " + filePath + " from SVN...")
         fileContent = self.client.cat(projectPath + filePath, Revision(opt_revision_kind.number, revision))
+        logger.info("SVNReader.cat - Finish concatenating " + filePath + " from SVN...")
+        
         return fileContent
     
     def diff(self, projectPath, filePath, sourceRevisionNumber, targetRevisionNumber):
         temp_prefix = "./temp_diff_"
+        
         revisionStart = Revision(opt_revision_kind.number, sourceRevisionNumber)
+        logger.info("SVNReader.diff - revisionStart: " + revisionStart)
+        
         revisionEnd = Revision(opt_revision_kind.number, targetRevisionNumber)
+        logger.info("SVNReader.diff - revisionEnd: " + revisionEnd)
+        
+        logger.info("SVNReader.diff - Start loading diffs from SVN...")
         diffContent = self.client.diff(temp_prefix, projectPath + filePath, revision1=revisionStart, revision2=revisionEnd)
+        logger.info("SVNReader.diff - Finish loading diffs from SVN...")
         
         diff = Diff()
         diff.content = diffContent
+        
         return diff
     
     def parseLogToChangeSets(self, logMessages, proPath):
