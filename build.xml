@@ -24,6 +24,12 @@
 	<property name="report.dir" value="${APP_ROOT}/target/test-results" />
 
 	<target name="unit-test" depends="compile">
+		<!-- To invoke flexunit task under linux, 
+		     make sure "gflashplayer" command is ready.
+		     There is a "flashplayer" tool from /Flex SDK/runtime/player, so
+		     you need to rename it to "gflashplayer",
+		     and put it under "PATH" dictory.
+		-->
 		<mkdir dir="${report.dir}" />
 		<flexunit timeout="10000" swf="${DEPLOY_DIR}/${fileNameTest}.swf" toDir="${report.dir}" haltonfailure="true" />
 
