@@ -5,6 +5,7 @@ from com.thoughtworks.scmreader import *
 # Mock SCMReader for testing
 ################################################
 class MockSCMReader(SCMReader):
+    
     def changeSets(self, proPath):
         files = []
         files.append(AddedFile('src/TestCase.java'))
@@ -55,25 +56,25 @@ path:http://svn-digester.googlecode.com/svn"""
 hId = application.saveProject(projectString1)
 svdId = application.saveProject(projectString2)
 
-logger.info('Two projects have been saved.')
-logger.info('    Project 1 named: ' + application.find(0).name)
-logger.info('    Project 2 named: ' + application.find(1).name)
+print 'Two projects have been saved.'
+print '    Project 1 named: ' + application.find(0).name
+print '    Project 2 named: ' + application.find(0).name
 
-logger.info('==========Get All Projects Information:============')
-logger.info(application.projects())
-logger.info('===================================================')
+print '==========Get All Projects Information:============'
+print application.projects()
+print '==================================================='
 
-logger.info('Update first project name to T-H')
+print 'Update first project name to T-H'
 application.updateProject(projectString11, hId)
 
-logger.info('======Get Updated All Projects Information:========')
-logger.info(application.projects())
-logger.info('===================================================')
+print '======Get Updated All Projects Information:========'
+print application.projects()
+print '==================================================='
 
-logger.info('!!!!!Get CSV of Harvester!!!!!')
-logger.info(application.toCSV(hId))
+print '!!!!!Get CSV of Harvester!!!!!'
+print application.toCSV(hId)
 
-logger.info('!!!!!Get CSV of svn-digester!!!!!')
-logger.info(application.toCSV(svdId))
+print '!!!!!Get CSV of svn-digester!!!!!'
+print application.toCSV(svdId)
 
 
