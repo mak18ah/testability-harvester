@@ -5,17 +5,21 @@ from com.thoughtworks.scmreader import *
 class CoreTest(unittest.TestCase):
     
     def setUp(self):
-        self.p = Project( developer='Dev1', name='Harvester', path='http://localhost')
-        self.str = '===\ndevelopers:Dev1\nname:Harvester\npath:http://localhost\n'
+        self.p = Project( developer='Dev1', name='Harvester', path='http://localhost', testPtns=['*Test.java', 'Test*.java'])
+        self.str = '===\ndevelopers:Dev1\nname:Harvester\npath:http://localhost\ntestPtn:*Test.java\ntestPtn:Test*.java\n'
         
     def test_serialize(self):
         self.assertEqual(self.str, serialize(self.p))
-        
+
     def test_deserialize(self):
         p = deserialize(self.str)
         self.assertEqual(self.p.developers, p.developers)
         self.assertEqual(self.p.name, p.name)
         self.assertEqual(self.p.path, p.path)
+        
+        self.assertEqual(len(self.p.testPtns), len(p.testPtns))
+        self.assertTrue(p.testPtns[0] in self.p.testPtns)
+        self.assertTrue(p.testPtns[1] in self.p.testPtns)
 
 
 class ProjectTest(unittest.TestCase):

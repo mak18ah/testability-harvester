@@ -1,27 +1,21 @@
 import os
-#from com.thoughtworks.logger import *
 
 class Project:
     
-    def __init__(self, scmReader=None, developer='', id=-1, name='', path=''):
+    def __init__(self, scmReader=None, developer='', id=-1, name='', path='', testPtns=[]):
         self.scmReader = scmReader
         self.developers = developer
         self.id = id
         self.name = name
         self.path = path
         self.changeSets = []
-        
-        #logger.info("Project Initialize - id: " + str(self.id))
-        #logger.info("Project Initialize - name: " + self.name)
-        #logger.info("Project Initialize - path: " + self.path)
-        #logger.info("Project Initialize - developersL: " + self.developers)
+        self.testPtns = testPtns
         
     def fetchChangeSets(self):
         changeSets = self.scmReader.changeSets(self.path)
         for cs in changeSets:
             cs.fetchFiles(self.scmReader)
             cs.path = self.path
-            #logger.info("Project.fetchChangeSet - path: " + cs.path)
         self.changeSets = changeSets
         
     def toCSV(self):
@@ -29,7 +23,6 @@ class Project:
         for cs in self.changeSets:
             csv += cs.toCSV() + '\n'
         
-        #logger.info("Project.toCSV - csv: " + csv)
         return csv
     
     
@@ -41,11 +34,6 @@ class ChangeSet:
         self.date = date # String for easy implement
         self.files = files
         self.path = ''
-        
-        #logger.info("ChangeSet Initialize - number: " + str(self.number))
-        #logger.info("ChangeSet Initialize - author: " + self.author)
-        #logger.info("ChangeSet Initialize - date: " + self.date)
-        #logger.info("ChangeSet Initialize - files: " + str(self.files))
     
     def fetchFiles(self, scmReader):
         for file in self.files:
@@ -56,7 +44,6 @@ class ChangeSet:
         csv = str(self.number) + ',' + self.author + ',' + \
                self.csvLanguage() + ',' + self.csvDate() + ',' + \
                'null' + ',' + self.csvAffectedLines()
-        #logger.info("ChangeSet.toCSV - csv: " + csv)
         return csv
     
     def csvLanguage(self):
@@ -83,7 +70,6 @@ class ChangeSet:
                 tD += f.countDeletedLines()
                 tM += f.countModifiedLines()
         statistics = str(pA) + ',' + str(pM) + ',' + str(pD) + ',' + str(tA) + ',' + str(tM) + ',' + str(tD)
-        #logger.info("ChangeSet.csvAffectedLines - statistics: " + statistics)
         return statistics
          
 
@@ -125,10 +111,6 @@ class AddedFile(File):
     def __init__(self, path):
         File.__init__(self, path)
         self.content = ''
-        
-        #logger.info("AddedFile Initialize - path: " + self.path)
-        #logger.info("AddedFile Initialize - type: " + self.type)
-        #logger.info("AddedFile Initialize - language: " + self.language)
     
     def fetch(self, changeSet, scmReader):
         content = scmReader.cat(changeSet.path, self.path, changeSet.number)
@@ -143,10 +125,6 @@ class DeletedFile(File):
     def __init__(self, path):
         File.__init__(self, path)
         self.content = ''
-        
-        #logger.info("DeletedFile Initialize - path: " + self.path)
-        #logger.info("DeletedFile Initialize - type: " + self.type)
-        #logger.info("DeletedFile Initialize - language: " + self.language)
     
     def fetch(self, changeSet, scmReader):
         content = scmReader.cat(changeSet.path, self.path, changeSet.number - 1)
@@ -161,10 +139,6 @@ class ModifiedFile(File):
     def __init__(self, path):
         File.__init__(self, path)
         self.diff = None
-    
-        #logger.info("ModifiedFile Initialize - path: " + self.path)
-        #logger.info("ModifiedFile Initialize - type: " + self.type)
-        #logger.info("ModifiedFile Initialize - language: " + self.language)
         
     def fetch(self, changeSet, scmReader):
         self.diff = scmReader.diff(changeSet.path, self.path, changeSet.number- 1, changeSet.number)
@@ -207,15 +181,12 @@ class Diff:
                 suspicion = False 
         
     def countAddedLines(self):
-        #logger.info("Diff.countAddedLines - added lines: " + str(self.__added))
         return self.__added
     
     def countDeletedLines(self):
-        #logger.info("Diff.countDeletedLines - deleted lines: " + str(self.__deleted))
         return self.__deleted
     
     def countModifiedLines(self):
-        #logger.info("Diff.countModifiedLines - modified lines: " + str(self.__modified))
         return self.__modified    
 
 
@@ -228,10 +199,14 @@ testPats_without_compile = [] # Patterns for match test code
 testPats = [re.compile(pat) for pat in testPats_without_compile]
 
 def serialize(project):
+    ptnText = ''
+    for pt in project.testPtns:
+        ptnText += 'testPtn:' + pt + '\n'
     return '===\n' + \
            'developers:' + project.developers + '\n' + \
            'name:' + project.name + '\n' + \
-           'path:' + project.path + '\n'
+           'path:' + project.path + '\n' + \
+           ptnText
 
 def deserialize(projectString):
     project = Project()
@@ -239,6 +214,10 @@ def deserialize(projectString):
     project.developers = lines[1][len('developers:'):]
     project.name = lines[2][len('name:'):]
     project.path = lines[3][len('path:'):]
+    
+    for pt in lines[4:]:
+        if not pt == '':
+            project.testPtns.append(pt[len('testPtn:'):])
     return project
 
 def shouldStatistics(file):
