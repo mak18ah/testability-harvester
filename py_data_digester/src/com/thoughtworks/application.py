@@ -1,4 +1,3 @@
-from com.thoughtworks.logger import *
 from com.thoughtworks.core import *
 
 class Application:
@@ -25,7 +24,6 @@ class Application:
         p.fetchChangeSets()
         
         self.map[p.id] = p
-#        logger.info("Save Project - " + str(p.id) + " - " + p.name)
         return p.id 
     
     def updateProject(self, projectString, id):
@@ -34,16 +32,13 @@ class Application:
         p.name = project.name
         p.developers = project.developers
         p.path = project.path
-        #logger.info("Update Project - " + str(p.id) + " - " + p.name)
     
     def toCSV(self, id):
         project = self.find(id)
-        #logger.info("Parse Project to CSV - " + str(project.id) + " - " + project.name) 
         return project.toCSV()
     
     def generateIdForProject(self):
         id = -1
         for i in self.map:
             if id <= i: id = i
-        #logger.info("Generate Project - " + str(id))
         return id + 1
