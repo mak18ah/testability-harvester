@@ -35,3 +35,47 @@ class ApplicationTest(unittest.TestCase):
         self.assertEqual('testability-harvester', updatedPro.name)
         
     
+class ProjectsStorageTest(unittest.TestCase):
+    def setUp(self):
+        self.storage = ProjectsStorage()
+        
+    def tearDown(self):
+        self.storage.stop()
+        
+    def test_projectqueue_initialization(self):
+        self.assertEqual(0, len(self.storage.projects))
+        self.assertEqual(0, len(self.storage.pendingProjects))
+        self.assertEqual(0, len(self.storage.failedProjects))
+        
+    def test_process_new_project_and_append_to_queue(self):
+        self.project = Project()
+        self.project.fetchChangeSets = lambda : time.sleep(1) 
+        self.storage.addProject(self.project)
+        
+        self.assertEqual(0, len(self.storage.projects))
+        self.assertEqual(1, len(self.storage.pendingProjects))
+        self.assertEqual(0, len(self.storage.failedProjects))
+        
+        time.sleep(3)
+        
+        self.assertEqual(1, len(self.storage.projects))
+        self.assertEqual(0, len(self.storage.pendingProjects))
+        self.assertEqual(0, len(self.storage.failedProjects))
+        
+    def test_reset_to_append_if_process_failed(self):
+        self.project = Project()
+        self.project.fetchChangeSets = self._raiseError
+        self.storage.addProject(self.project)
+        
+        self.assertEqual(0, len(self.storage.projects))
+        self.assertEqual(1, len(self.storage.pendingProjects))
+        
+        time.sleep(3)
+            
+        self.assertEqual(0, len(self.storage.projects))
+        self.assertEqual(0, len(self.storage.pendingProjects))
+        self.assertEqual(1, len(self.storage.failedProjects))
+        
+    def _raiseError(self):
+        raise TypeError("")
+    
