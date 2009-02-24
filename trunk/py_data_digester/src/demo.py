@@ -53,8 +53,8 @@ developers:dev3,dev4
 name:svn-digester
 path:http://svn-digester.googlecode.com/svn"""
 
-hId = application.saveProject(projectString1)
-svdId = application.saveProject(projectString2)
+hId = application.submitProject(projectString1)
+svdId = application.submitProject(projectString2)
 
 print 'Two projects have been saved.'
 print '    Project 1 named: ' + application.find(0).name

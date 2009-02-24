@@ -28,8 +28,8 @@ developers:dev3,dev4
 name:svn-digester
 path:http://svn-digester.googlecode.com/svn"""
 
-hId = application.saveProject(projectString1, id)
-svdId = application.saveProject(projectString2, id)
+hId = application.submitProject(projectString1, id)
+svdId = application.submitProject(projectString2, id)
 
 
 class csv:        
@@ -55,7 +55,7 @@ class save:
         input = web.input()
         proID = input.id
         proString = input.projectString
-        return application.saveProject(id, projectString)
+        return application.submitProject(id, projectString)
     
     def POST(self):
         self.GET()
