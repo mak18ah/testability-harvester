@@ -20,14 +20,19 @@ class Application:
             str += serialize(p)
         return str
     
-    def saveProject(self, projectString):
+    def submitProject(self, projectString):
         p = deserialize(projectString)
-        p.id = self.generateIdForProject()
         p.scmReader = self.scmReader
         p.fetchChangeSets()
-        
-        self.map[p.id] = p
+
+        self.saveProject(p)
         return p.id 
+    
+    # TODO synchronize
+    def saveProject(self, project):
+        project.id = self.generateIdForProject()
+        self.map[project.id] = p
+        return project.id
         
     def updateProject(self, projectString, id):
         project = deserialize(projectString)
